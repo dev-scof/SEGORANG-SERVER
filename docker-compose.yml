@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  flask:
+    depends_on:
+      - mysql
+    build: 
+      dockerfile: dockerfile.dev
+      context: ./flask
+    ports:
+      - "50505:50505"
+    links:
+      - mysql
+    networks:
+      - sego_network
+  mysql:
+    build: 
+      dockerfile: dockerfile.dev
+      context: ./mysql
+    ports:
+    - "3306:3306"
+    volumes:
+      - ./mysql/mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: scof
+      MYSQL_DATABASE: SEGORANG
+    networks:
+      - sego_network
+
+networks:
+  sego_network:
