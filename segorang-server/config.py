@@ -22,9 +22,12 @@ class Config:
     JWT_SESSION_COOKIE = False
     SECRET_KEY = os.environ[APP_NAME + "_SECRET_KEY"]
 
-    # MongoDB
-    MONGODB_URI = os.environ[APP_NAME + "_MONGODB_URI"]
-    MONGODB_NAME = os.environ[APP_NAME + "_MONGODB_NAME"]
+    # MySQL
+    MYSQL_HOST = os.environ[APP_NAME + "_MYSQL_HOST"]
+    MYSQL_PORT = os.environ[APP_NAME + "_MYSQL_PORT"]
+    MYSQL_USER = os.environ[APP_NAME + "_MYSQL_USER"]
+    MYSQL_PASSWORD = os.environ[APP_NAME + "_MYSQL_PASSWORD"]
+    MYSQL_DB = os.environ[APP_NAME + "_MYSQL_DB"]
 
     # S3
     S3_DOMAIN = os.environ[APP_NAME + "_S3_DOMAIN"]
