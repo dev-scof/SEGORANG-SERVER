@@ -4,7 +4,6 @@ API Request Handler and util
 import json
 from flask import Flask, g, current_app, request, Response
 from loguru import logger
-from model.mongodb import Log
 
 
 def init_app(app: Flask):

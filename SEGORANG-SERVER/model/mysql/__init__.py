@@ -1,4 +1,3 @@
-from pymysql import connect
 from config import config
 from flask import g
 # Tables
@@ -9,23 +8,8 @@ MODELS = [
 ]
 
 
-def get_db(
-    host: str = config.MYSQL_HOST,
-    port: int = config.MYSQL_PORT,
-    user: str = config.MYSQL_USER,
-    password: str = config.MYSQL_PASSWORD,
-    db: str = config.MYSQL_DB,
-    charset: str = "utf8"
-) -> connect:
-    db = connect(
-        host=host,
-        port=port,
-        user=user,
-        passwd=password,
-        db=db,
-        charset=charset
-    )
-    return db
+def get_db():
+    pass
 
 
 class ModelInitializer:

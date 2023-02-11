@@ -3,17 +3,18 @@ Application Model
 """
 from config import APP_NAME
 from flask import Flask
-from model import mongodb
+from model import mysql
 
 
 def register_connection_pool(app: Flask):
-    app.db = mongodb.get_cursor()
+    # app.db = mysql.get_cursor()
+    pass
 
 
 def init_app(config):
     """Model Init Function"""
 
     # MongoDB Init
-    initializer = mongodb.ModelInitializer()
+    initializer = mysql.ModelInitializer()
     initializer.init_model()
     print("[%s] MongoDB Initialization Completed." % APP_NAME)

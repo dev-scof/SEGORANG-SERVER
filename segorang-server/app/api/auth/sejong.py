@@ -4,7 +4,6 @@ from flask_validation_extended import Validator, Json, MinLen
 from app.api.response import bad_request, response_200, unauthorized
 from app.api.decorator import timer
 from controller.auth.sejong import sejong_auth
-from model.mongodb import User
 from config import Config
 from datetime import timedelta
 from . import api_auth as api

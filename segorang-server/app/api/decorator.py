@@ -10,7 +10,6 @@ from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from app.api.response import bad_access_token, forbidden
-from model.mongodb import User
 from config import config
 
 
