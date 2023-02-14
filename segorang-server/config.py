@@ -23,7 +23,10 @@ class Config:
     SECRET_KEY = os.environ[APP_NAME + "_SECRET_KEY"]
 
     # MySQL
-    MYSQL_URI = os.environ[APP_NAME + "_MYSQL_URI"]
+    MYSQL_HOST = os.environ[APP_NAME + "_MYSQL_HOST"]
+    MYSQL_USER = os.environ[APP_NAME + "_MYSQL_USER"]
+    MYSQL_PASSWORD = os.environ[APP_NAME + "_MYSQL_PASSWORD"]
+    MYSQL_NAME = os.environ[APP_NAME + "_MYSQL_NAME"]
     
 
     # S3

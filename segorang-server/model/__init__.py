@@ -7,7 +7,7 @@ from model import mysql
 
 
 def register_connection_pool(app: Flask):
-    # app.db = mysql.get_cursor()
+    app.db = mysql.get_cursor()
     pass
 
 
@@ -17,4 +17,4 @@ def init_app(config):
     # MongoDB Init
     initializer = mysql.ModelInitializer()
     initializer.init_model()
-    print("[%s] MongoDB Initialization Completed." % APP_NAME)
+    print("[%s] MySQL DATABASE Initialization Completed." % APP_NAME)

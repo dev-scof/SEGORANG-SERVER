@@ -17,8 +17,6 @@ def sejong_auth_api(
     sj_pw=Json(str)
 ):
     cur_data = request.get_json()
-    current_app.logger.info("회원가입 API 요청들어옴\n"\
-                            "받은 값 = {}".format(cur_data))
     result = sejong_auth(cur_data)
     if result.is_auth == True:
         current_app.logger.info("인증 완료")
@@ -27,4 +25,3 @@ def sejong_auth_api(
         })
     else:
         return bad_request('잘못된 정보입니다.')
-    

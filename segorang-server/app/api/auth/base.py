@@ -1,19 +1,19 @@
 # """
 # API Server Base Auth APIs
 # """
-# from flask import current_app, g
-# from werkzeug.security import generate_password_hash, check_password_hash
-# from flask_validation_extended import Validator, Json, MinLen
-# from flask_jwt_extended import (
-#     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
-# )
-# from app.api.response import response_200, bad_request, forbidden, no_content
-# from app.api.decorator import timer, login_required
-# from model.mongodb import User
-# from config import config
-# from . import api_auth as api
-# from datetime import timedelta
-# from config import Config
+from flask import current_app, g
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, Number
+from flask_jwt_extended import (
+    get_jwt_identity, create_refresh_token, create_access_token, jwt_required
+)
+from app.api.response import response_200, bad_request, forbidden, no_content
+from app.api.decorator import timer, login_required
+from model.mysql.user import User
+from config import config
+from . import api_auth as api
+from datetime import timedelta
+from config import Config
 # @api.post('/signin')
 # @Validator(bad_request)
 # @timer
@@ -40,39 +40,44 @@
 #     })
 
 
-# @api.post('/signup')
-# @Validator(bad_request)
-# @timer
-# def auth_signup_api(
-#     id=Json(str, rules=MinLen(5)),
-#     pw=Json(str, rules=MinLen(8)),
-#     name=Json(str, rules=MinLen(1), optional=True),
-# ):
-#     """회원가입"""
-#     user_model = User(current_app.db)
-#     if (
-#         user_model.get_password_with_id(id)
-#         or id == config.ADMIN_ID
-#     ):
-#         return bad_request('user_id already exists.')
-#     user_oid = user_model.insert_user({
-#         'id': id,
-#         'password': generate_password_hash(pw),
-#         'name':name if name else id
-#     }).inserted_id
-
-#     user_oid = str(user_oid)
-#     return response_200({
-#         'access_token': create_access_token(
-#             user_oid,
-#         expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         ),
-#         'refresh_token': create_refresh_token(
-#             user_oid,
-#             expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         )
-#     })
-
+@api.post('/signup')
+@Validator(bad_request)
+@timer
+def signup_api(
+    sj_id=Json(str, rules=MinLen(2)),
+    id=Json(str, rules=[MinLen(5), MaxLen(20)]),
+    pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
+    name=Json(str, rules=[MinLen(1), MaxLen(20)]),
+    major=Json(str, rules=[MinLen(1), MaxLen(20)]),
+    nickname=Json(str, rules=[MinLen(3), MaxLen(20)]),
+    sejong_auth=Json(bool)
+):
+    """회원가입"""
+    
+    """모델 생성"""
+    user_model = User(current_app.db)
+    try:
+        user_model.insert_user({
+            'sj_id':sj_id,
+            'id':id,
+            'pw':pw,
+            'name':name,
+            'major':major,
+            'nickname':nickname,
+            'sejong_auth':sejong_auth,
+            'version':user_model.VERSION
+        })
+    except Exception as err:
+        current_app.logger.error(err)
+        return bad_request(err)
+    return response_200({
+        'access_token': create_access_token(
+            identity = id,
+            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)),
+        'refresh_token': create_refresh_token(
+            identity = id,
+            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES))
+    })
 
 # @api.get('/refresh')
 # @jwt_required(refresh=True)
