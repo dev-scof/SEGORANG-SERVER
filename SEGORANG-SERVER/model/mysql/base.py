@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-import MySQLdb
 from config import config
 
 
@@ -8,18 +7,15 @@ class Model(metaclass=ABCMeta):
 
     VERSION = 1
 
-    def __init__(self, cursor) -> None:
+    def __init__(self, conn) -> None:
         self.table_name = self.__class__.__name__.lower()
-        self.cursor = cursor
-    
+        self.conn = conn
+        self.cursor = conn.cursor()
+
     @property
-    def schema(self) -> dict:
-        """Get default document format"""
-        return {
-            'created_at': datetime.now(),
-            'updated_at': datetime.now(),
-            '__version__': self.VERSION,
-        }
+    def insert_query(self) -> str:
+        """Get Default insert query format"""
+        return "INSERT INTO {table_name}({keys}) VALUES({values});"
 
     def create_index(self) -> None:
         pass
@@ -28,3 +24,6 @@ class Model(metaclass=ABCMeta):
         """Create Table"""
         sql = open(f"model/mysql/sqls/tables/{self.table_name}.sql").read()
         self.cursor.execute(sql)
+        self.conn.commit()
+        self.cursor.close()
+        self.conn.close()

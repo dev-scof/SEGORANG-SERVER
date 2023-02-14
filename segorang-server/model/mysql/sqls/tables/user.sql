@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS user
 (
     id          VARCHAR(20)     NOT NULL    PRIMARY KEY,
+    sj_id       VARCHAR(20)     NOT NULL,
     nickname    VARCHAR(20)     NOT NULL    UNIQUE KEY,
     pw          VARCHAR(16)     NOT NULL,
     name        VARCHAR(20)     NOT NULL,

@@ -12,16 +12,15 @@ def get_cursor(
         password=config.MYSQL_PASSWORD,
         db=config.MYSQL_NAME
     ):
-    cursor = MySQLdb.connect(
+
+    return MySQLdb.connect(
             host=host,
             user=user,
             password=password,
             use_unicode=True,
             db=db,
             charset="utf8"
-        ).cursor()
-
-    return cursor
+        )
 
 
 class ModelInitializer:
