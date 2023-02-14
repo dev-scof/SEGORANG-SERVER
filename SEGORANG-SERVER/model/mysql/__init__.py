@@ -1,42 +1,53 @@
 from config import config
-from flask import g
-# Tables
-
-
+import MySQLdb
+from .user import User
+from .board import Board
 MODELS = [
-    # Here is tables
+    User, Board
 ]
 
+def get_cursor(
+        host=config.MYSQL_HOST,
+        user=config.MYSQL_USER,
+        password=config.MYSQL_PASSWORD,
+        db=config.MYSQL_NAME
+    ):
+    cursor = MySQLdb.connect(
+            host=host,
+            user=user,
+            password=password,
+            use_unicode=True,
+            db=db,
+            charset="utf8"
+        ).cursor()
 
-def get_db():
-    pass
+    return cursor
 
 
 class ModelInitializer:
+    
     def __init__(self) -> None:
-        self.host = config.MYSQL_HOST
-        self.port = config.MYSQL_PORT
-        self.user = config.MYSQL_USER
-        self.passwd = config.MYSQL_PASSWORD
-        self.db = config.MYSQL_DB
-        self.charset = "utf8"
-
+        self.host=config.MYSQL_HOST
+        self.user=config.MYSQL_USER
+        self.password=config.MYSQL_PASSWORD
+        self.db=config.MYSQL_NAME
+    
     @property
-    def db(self):
-        """ property of database"""
-        return get_db()
+    def cursor(self):
+        return get_cursor(
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            db=self.db
+        )
+    
+    def init_model(self):
+        """Initializer All Process"""
+        with self.cursor as cur:
+            self.init_tables(cur)
 
     @staticmethod
-    def init_db():
-        """
-        Initialize Databases 
-        execute sql queries
-            - create tables
-            - create records
-        """
-        if 'db' not in g:
-            g.db = get_db()
-        with g.db.cursor() as cur:
-            pass
-        g.db.commit()
-        g.db.close()
+    def init_tables(cur):
+        """Create Table each Tables"""
+        for model in MODELS:
+            model(cur).create_table()
