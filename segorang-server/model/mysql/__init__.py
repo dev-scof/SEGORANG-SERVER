@@ -8,6 +8,7 @@ MODELS = [
 
 def get_cursor(
         host=config.MYSQL_HOST,
+        port=config.MYSQL_PORT,
         user=config.MYSQL_USER,
         password=config.MYSQL_PASSWORD,
         db=config.MYSQL_NAME
@@ -15,6 +16,7 @@ def get_cursor(
 
     return MySQLdb.connect(
             host=host,
+            port=int(port),
             user=user,
             password=password,
             use_unicode=True,
@@ -27,6 +29,7 @@ class ModelInitializer:
     """TEST"""
     def __init__(self) -> None:
         self.host=config.MYSQL_HOST
+        self.port=config.MYSQL_PORT
         self.user=config.MYSQL_USER
         self.password=config.MYSQL_PASSWORD
         self.db=config.MYSQL_NAME
@@ -35,6 +38,7 @@ class ModelInitializer:
     def cursor(self):
         return get_cursor(
             host=self.host,
+            port=self.port,
             user=self.user,
             password=self.password,
             db=self.db

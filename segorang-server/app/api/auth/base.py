@@ -101,7 +101,7 @@ def check_duplicate_id_api(
 @Validator(bad_request)
 @timer
 def check_duplicate_nickname_api(
-    nickname=Json(str, rules=[MinLen(5), MaxLen(20)])
+    nickname=Json(str, rules=[MinLen(3), MaxLen(20)])
 ):
     """NICKNAME 중복 확인"""
     user_model = User(current_app.db)

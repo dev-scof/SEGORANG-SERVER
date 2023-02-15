@@ -4,6 +4,7 @@ from .utils import get_fields_data, set_quote
 class User(Model):
 
     VERSION = 1
+
     @property
     def property(self):
         return [
@@ -11,6 +12,7 @@ class User(Model):
             'pw', 'name', 'major', 
             'is_admin', 'sejong_auth', 
             'created_at', 'updated_at', 'version']
+
     def insert_user(self, user_data:dict):
         keys, values = get_fields_data(user_data)
         query = self.insert_query.format(
