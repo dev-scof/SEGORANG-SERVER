@@ -7,9 +7,10 @@ from flask_validation_extended import Validator, Json, MinLen, MaxLen, Number
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
-from app.api.response import response_200, bad_request, forbidden, no_content
+from app.api.response import response_200, bad_request, forbidden, no_content, conflict
 from app.api.decorator import timer, login_required
 from model.mysql.user import User
+from MySQLdb import IntegrityError
 from config import config
 from . import api_auth as api
 from datetime import timedelta
@@ -52,24 +53,24 @@ def signup_api(
     nickname=Json(str, rules=[MinLen(3), MaxLen(20)]),
     sejong_auth=Json(bool)
 ):
-    """회원가입"""
-    
-    """모델 생성"""
+    """회원가입 API"""
     user_model = User(current_app.db)
-    try:
-        user_model.insert_user({
-            'sj_id':sj_id,
-            'id':id,
-            'pw':pw,
-            'name':name,
-            'major':major,
-            'nickname':nickname,
-            'sejong_auth':sejong_auth,
-            'version':user_model.VERSION
-        })
-    except Exception as err:
-        current_app.logger.error(err)
-        return bad_request(err)
+    model_res = user_model.insert_user({
+        'sj_id':sj_id,
+        'id':id,
+        'pw':pw,
+        'name':name,
+        'major':major,
+        'nickname':nickname,
+        'sejong_auth':sejong_auth,
+        'version':user_model.VERSION
+    })
+    
+    # error 발생시
+    if isinstance(model_res, IntegrityError):
+        return conflict("Duplicate key or Foreign Key Constraint fail")
+        
+    # 회원가입 완료
     return response_200({
         'access_token': create_access_token(
             identity = id,
@@ -78,6 +79,24 @@ def signup_api(
             identity = id,
             expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES))
     })
+
+@api.post('/id')
+@Validator(bad_request)
+@timer
+def check_duplicate_id_api(
+    id=Json(str, rules=[MinLen(5), MaxLen(20)])
+):
+    """ID 중복 확인"""
+    user_model = User(current_app.db)
+    model_res = user_model.get_user_by_single_property('id', id)
+    res = {}
+    if model_res is None:
+        res['in_db']=False
+    else:
+        res['in_db']=True
+    return response_200(res)
+
+
 
 # @api.get('/refresh')
 # @jwt_required(refresh=True)

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS board;
 CREATE TABLE IF NOT EXISTS board
 (
     id              VARCHAR(20)     NOT NULL    PRIMARY KEY,

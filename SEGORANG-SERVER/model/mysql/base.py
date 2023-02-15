@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from config import config
-
+from MySQLdb.connections import Connection
+from MySQLdb.cursors import Cursor
 
 class Model(metaclass=ABCMeta):
 
@@ -9,13 +10,18 @@ class Model(metaclass=ABCMeta):
 
     def __init__(self, conn) -> None:
         self.table_name = self.__class__.__name__.lower()
-        self.conn = conn
-        self.cursor = conn.cursor()
+        self.conn:Connection = conn
+        self.cursor:Cursor = conn.cursor()
 
     @property
     def insert_query(self) -> str:
         """Get Default insert query format"""
         return "INSERT INTO {table_name}({keys}) VALUES({values});"
+
+    @property
+    def select_query(self) -> str:
+        """Get Default select query format"""
+        return "SELECT {property} FROM {table_name} {condition};"
 
     def create_index(self) -> None:
         pass
@@ -24,6 +30,3 @@ class Model(metaclass=ABCMeta):
         """Create Table"""
         sql = open(f"model/mysql/sqls/tables/{self.table_name}.sql").read()
         self.cursor.execute(sql)
-        self.conn.commit()
-        self.cursor.close()
-        self.conn.close()
