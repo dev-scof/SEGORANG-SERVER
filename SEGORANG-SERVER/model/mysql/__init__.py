@@ -24,7 +24,7 @@ def get_cursor(
 
 
 class ModelInitializer:
-    
+    """TEST"""
     def __init__(self) -> None:
         self.host=config.MYSQL_HOST
         self.user=config.MYSQL_USER
