@@ -97,6 +97,22 @@ def check_duplicate_id_api(
     return response_200(res)
 
 
+@api.post('/nickname')
+@Validator(bad_request)
+@timer
+def check_duplicate_nickname_api(
+    nickname=Json(str, rules=[MinLen(5), MaxLen(20)])
+):
+    """NICKNAME 중복 확인"""
+    user_model = User(current_app.db)
+    model_res = user_model.get_user_by_single_property('nickname', nickname)
+    res = {}
+    if model_res is None:
+        res['in_db']=False
+    else:
+        res['in_db']=True
+    return response_200(res)
+
 
 # @api.get('/refresh')
 # @jwt_required(refresh=True)
