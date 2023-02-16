@@ -133,21 +133,21 @@ def check_duplicate_nickname_api(
     return response_200(res)
 
 
-# @api.get('/refresh')
-# @jwt_required(refresh=True)
-# def auth_token_refresh():
-#     """JWT 토큰 리프레시"""
-#     user_oid = get_jwt_identity()
-#     return response_200({
-#         'access_token': create_access_token(
-#             identity=user_oid,
-#             expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         ),
-#         'refresh_token': create_refresh_token(
-#             identity=user_oid,
-#             expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         ),
-#     })
+@api.get('/refresh')
+@jwt_required(refresh=True)
+def get_refresh_token():
+    """JWT 토큰 리프레시"""
+    id = get_jwt_identity()
+    return response_200({
+        'access_token': create_access_token(
+            identity=id,
+            expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
+        ),
+        'refresh_token': create_refresh_token(
+            identity=id,
+            expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
+        ),
+    })
 
 
 # @api.get("/auth-test")
