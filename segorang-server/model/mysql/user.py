@@ -34,6 +34,9 @@ class User(Model):
             condition=f"WHERE {property}={set_quote(input_property)}"
         )
         self.cursor.execute(query)
-
-        return self.cursor.fetchone()
+        user_data = self.cursor.fetchone()
+        if user_data is None:
+            return None
+        else:
+            return dict(zip(self.property, user_data))
 
