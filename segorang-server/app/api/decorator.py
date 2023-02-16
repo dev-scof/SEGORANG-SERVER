@@ -7,7 +7,7 @@ from functools import wraps
 from time import time
 from flask import current_app, g, Response
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
-from bson.objectid import ObjectId
+from model.mysql.user import User
 from bson.errors import InvalidId
 from app.api.response import bad_access_token, forbidden
 from config import config
@@ -42,13 +42,13 @@ def login_required(func):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         try:
-            user_oid = ObjectId(get_jwt_identity())
-        except InvalidId:
+            user_id = get_jwt_identity()
+        except:
             return bad_access_token
         user_model = User(current_app.db)
-        if not user_oid or not user_model.get_password(user_oid):
+        if not user_id or not user_model.get_user_by_single_property('id', user_id):
             return bad_access_token
-        g.user_oid = user_oid
+        g.user_id = user_id
         # TODO: 유저 최근 액세스 날짜 트래킹, 더 괜찮은거 없을까?
         # user_model.update_last_access_date(user_id)
         return func(*args, **kwargs)
