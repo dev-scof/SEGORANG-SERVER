@@ -23,6 +23,11 @@ class Model(metaclass=ABCMeta):
         """Get Default select query format"""
         return "SELECT {property} FROM {table_name} {condition};"
 
+    @property
+    def delete_query(self) -> str:
+        """Get Default delete query format"""
+        return "DELETE FROM {table_name} {condition};"
+
     def create_index(self) -> None:
         pass
 

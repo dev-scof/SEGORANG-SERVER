@@ -39,4 +39,17 @@ class User(Model):
             return None
         else:
             return dict(zip(self.property, user_data))
+    
+    def delete_user_by_id(self, id:str):
+        """id에 해당하는 사용자를 삭제한다."""
+        query = self.delete_query.format(
+            table_name=self.table_name,
+            condition=f'WHERE id="{id}"'
+        )
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            return e
 
