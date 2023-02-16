@@ -15,36 +15,53 @@ from config import config
 from . import api_auth as api
 from datetime import timedelta
 from config import Config
-# @api.post('/signin')
-# @Validator(bad_request)
-# @timer
-# def auth_signin_api(
-#     id=Json(str, rules=MinLen(5)),
-#     pw=Json(str, rules=MinLen(8))
-# ):
-#     """로그인"""
-#     user = User(current_app.db).get_password_with_id(id)
-#     if not user or user['password'] is None:
-#          return bad_request("Authentication failed.")
-#     if not check_password_hash(user['password'], pw):
-#         return bad_request("Authentication failed.")
-#     user_oid = str(user['_id'])
-#     return response_200({
-#         'access_token': create_access_token(
-#             user_oid,
-#             expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         ),
-#         'refresh_token': create_refresh_token(
-#             user_oid,
-#             expires_delta= timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)
-#         )
-#     })
+
+
+@api.post('/signin')
+@Validator(bad_request)
+@timer
+def signin_api(
+    id=Json(str, rules=[MinLen(5), MaxLen(20)]),
+    pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
+):
+    """로그인 API"""
+    user_model = User(current_app.db)
+    model_res = user_model.get_user_by_single_property('id', id)
+
+    if model_res is None:
+        return unauthorized("Invalid Login Infomation")
+    elif model_res.get('pw') != pw:
+        return unauthorized("Invalid Login Infomation")
+
+    return response_200({
+        'access_token': create_access_token(
+            identity = id,
+            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)),
+        'refresh_token': create_refresh_token(
+            identity = id,
+            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES))
+    })
+
+
+@api.delete("/")
+@timer
+@login_required
+@Validator(bad_request)
+def auth_withdrawal_api(
+    pw=Json(str, rules=MinLen(8))
+):
+    """회원 탈퇴"""
+    user = User(current_app.db).get_password(g.user_oid)
+    # 비밀번호 확인 검증
+    if not check_password_hash(user['password'], pw):
+        return forbidden("Authentication failed.")
+    return no_content
 
 
 @api.post('/signup')
 @Validator(bad_request)
 @timer
-def signup_api(
+def auth_signup_api(
     sj_id=Json(str, rules=MinLen(2)),
     id=Json(str, rules=[MinLen(5), MaxLen(20)]),
     pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
@@ -73,36 +90,13 @@ def signup_api(
     # 회원가입 완료
     return response_200()
 
-@api.post('/signin')
-@Validator(bad_request)
-@timer
-def signin_api(
-    id=Json(str, rules=[MinLen(5), MaxLen(20)]),
-    pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
-):
-    """로그인 API"""
-    user_model = User(current_app.db)
-    model_res = user_model.get_user_by_single_property('id', id)
 
-    if model_res is None:
-        return unauthorized("Invalid Login Infomation")
-    elif model_res.get('pw') != pw:
-        return unauthorized("Invalid Login Infomation")
-
-    return response_200({
-        'access_token': create_access_token(
-            identity = id,
-            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES)),
-        'refresh_token': create_refresh_token(
-            identity = id,
-            expires_delta = timedelta(Config.JWT_ACCESS_TOKEN_EXPIRES))
-    })
 
 
 @api.post('/id')
 @Validator(bad_request)
 @timer
-def check_duplicate_id_api(
+def auth_check_duplicate_id_api(
     id=Json(str, rules=[MinLen(5), MaxLen(20)])
 ):
     """ID 중복 확인"""
@@ -119,7 +113,7 @@ def check_duplicate_id_api(
 @api.post('/nickname')
 @Validator(bad_request)
 @timer
-def check_duplicate_nickname_api(
+def auth_check_duplicate_nickname_api(
     nickname=Json(str, rules=[MinLen(3), MaxLen(20)])
 ):
     """NICKNAME 중복 확인"""
@@ -135,7 +129,7 @@ def check_duplicate_nickname_api(
 
 @api.get('/refresh')
 @jwt_required(refresh=True)
-def get_refresh_token():
+def auth_get_refresh_token():
     """JWT 토큰 리프레시"""
     id = get_jwt_identity()
     return response_200({
@@ -158,16 +152,3 @@ def get_refresh_token():
 #     return response_200("hello, %s" % get_jwt_identity())
 
 
-# @api.delete("/withdrawal")
-# @timer
-# @login_required
-# @Validator(bad_request)
-# def auth_withdrawal_api(
-#     pw=Json(str, rules=MinLen(8))
-# ):
-#     """회원 탈퇴"""
-#     user = User(current_app.db).get_password(g.user_oid)
-#     # 비밀번호 확인 검증
-#     if not check_password_hash(user['password'], pw):
-#         return forbidden("Authentication failed.")
-#     return no_content
