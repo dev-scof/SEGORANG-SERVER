@@ -23,32 +23,32 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
-  steps:
-  - name: Checkout 
-    uses: actions/checkout@v3
-    
-  - name: Login to DockerHub
-    uses: docker/login-action@v1
-    with:
-      username: ${{ env.DOCKERHUB_USER }}
-      password: ${{ env.DOCKERHUB_PW }}
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ env.DOCKERHUB_USER }}
+        password: ${{ env.DOCKERHUB_PW }}
 
-  - name: Download env file from S3
-    uses: keithweaver/aws-s3-github-action@v1.0.0
-    with:
-      command: cp
-      aws_access_key_id: ${{ env.AWS_S3_ACCESS_KEY }}
-      aws_secret_access_key: ${{ env.AWS_S3_SECRET_KEY }}
-      aws_region: ${{ env.AWS_REGION }}
-      source: ${{ env.SEGORANG_DEV_ENV_PATH }}
-      destination: './SEGORANG-SERVER/.env'
+    - name: Download env file from S3
+      uses: keithweaver/aws-s3-github-action@v1.0.0
+      with:
+        command: cp
+        aws_access_key_id: ${{ env.AWS_S3_ACCESS_KEY }}
+        aws_secret_access_key: ${{ env.AWS_S3_SECRET_KEY }}
+        aws_region: ${{ env.AWS_REGION }}
+        source: ${{ env.SEGORANG_DEV_ENV_PATH }}
+        destination: './SEGORANG-SERVER/.env'
 
-  - name: build and release to DockerHub
-    env:
-      NAME: ${{ env.DOCKERHUB_USER }}
-      REPO: segorang-server
-    run: |
-      cd ./SEGORANG-SERVER
-      docker build -t $REPO .
-      docker tag $REPO:latest $NAME/$REPO:latest
-      docker push $NAME/$REPO:latest
+    - name: build and release to DockerHub
+      env:
+        NAME: ${{ env.DOCKERHUB_USER }}
+        REPO: segorang-server
+      run: |
+        cd ./SEGORANG-SERVER
+        docker build -t $REPO .
+        docker tag $REPO:latest $NAME/$REPO:latest
+        docker push $NAME/$REPO:latest
