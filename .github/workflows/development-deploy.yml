@@ -1,0 +1,14 @@
+name: SEGORANG Development Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+  DOCKERHUB_PW: ${{ secrets.DOCKERHUB_PW }}
+  SEGORANG_PROD_HOST: ${{ secrets.SESCO_PROD_HOST }}
+  SEGORANG_PROD_PORT: ${{ secrets.SESCO_PROD_PORT }}
+  SEGORANG_PROD_USER: ${{ secrets.SESCO_PROD_USER }}
+  SEGORANG_PROD_PW: ${{ secrets.SESCO_PROD_PW }}
