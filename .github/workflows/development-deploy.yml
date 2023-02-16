@@ -41,14 +41,14 @@ jobs:
         aws_secret_access_key: ${{ env.AWS_S3_SECRET_KEY }}
         aws_region: ${{ env.AWS_REGION }}
         source: ${{ env.SEGORANG_DEV_ENV_PATH }}
-        destination: './SEGORANG-SERVER/.env'
+        destination: './segorang-server/.env'
 
     - name: build and release to DockerHub
       env:
         NAME: ${{ env.DOCKERHUB_USER }}
         REPO: segorang-server
       run: |
-        cd ./SEGORANG-SERVER
+        cd ./
         docker build -t $REPO .
         docker tag $REPO:latest $NAME/$REPO:latest
         docker push $NAME/$REPO:latest
