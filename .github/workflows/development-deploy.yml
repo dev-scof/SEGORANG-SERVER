@@ -52,3 +52,17 @@ jobs:
         docker build -t $REPO .
         docker tag $REPO:latest $NAME/$REPO:latest
         docker push $NAME/$REPO:latest
+    - name: Docker Pull and Server Restart
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SEGORANG_DEV_HOST }}
+        port: ${{ env.SEGORANG_DEV_PORT }}
+        username: ${{ env.SEGORANG_DEV_USER }}
+        password: ${{ env.SEGORANG_DEV_PW }}
+        
+        script: |
+          cd segorang && \
+          docker pull ${{ env.DOCKERHUB_USER }}/segorang-server:latest && \
+          docker-compose stop segorang-server && \
+          docker-compose rm -f segorang-server && \
+          docker-compose up -d --no-deps segorang-server
