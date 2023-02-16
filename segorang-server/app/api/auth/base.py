@@ -43,21 +43,6 @@ def signin_api(
     })
 
 
-@api.delete("/")
-@timer
-@login_required
-@Validator(bad_request)
-def auth_withdrawal_api(
-    pw=Json(str, rules=MinLen(8))
-):
-    """회원 탈퇴"""
-    user = User(current_app.db).get_password(g.user_oid)
-    # 비밀번호 확인 검증
-    if not check_password_hash(user['password'], pw):
-        return forbidden("Authentication failed.")
-    return no_content
-
-
 @api.post('/signup')
 @Validator(bad_request)
 @timer
@@ -90,6 +75,19 @@ def auth_signup_api(
     # 회원가입 완료
     return response_200()
 
+
+@api.delete("/")
+@login_required
+@timer
+def auth_withdrawal_api():
+    """회원 탈퇴 API"""
+    user_id = get_jwt_identity()
+    user_model = User(current_app.db)
+    model_res = user_model.delete_user_by_id(user_id)
+    if model_res:
+        return no_content
+    else:
+        return bad_request(model_res)
 
 
 
