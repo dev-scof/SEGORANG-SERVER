@@ -24,7 +24,7 @@ def sejong_auth_api(
 
     if result.is_auth == True:
         current_app.logger.info("인증 완료")
-        user_model = User(current_app.db)
+        user_model = User(current_app.conn)
         model_res = user_model.get_user_by_single_property('sj_id', sj_id)
         if model_res is None:
             return response_200({

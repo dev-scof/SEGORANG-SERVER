@@ -19,13 +19,13 @@ class User(Model):
             table_name=self.table_name,
             keys=', '.join(map(str, keys)),
             values=', '.join(map(set_quote, values)))
-        try:
-            self.cursor.execute(query)
-            self.conn.commit()
-            return True
-        except Exception as e:
-            return e
         
+        exe_result = self.execute_by_cursor(query)
+        if exe_result == True:
+            return self.commit_by_conn()
+        else:
+            return exe_result
+                
     def get_user_by_single_property(self, property, input_property):
         """한 속성에 해당하는 속성값을 통해 사용자를 찾는다"""
         query = self.select_query.format(
@@ -33,12 +33,18 @@ class User(Model):
             table_name=self.table_name,
             condition=f"WHERE {property}={set_quote(input_property)}"
         )
-        self.cursor.execute(query)
-        user_data = self.cursor.fetchone()
-        if user_data is None:
-            return None
+        
+        exe_result = self.execute_by_cursor(query)
+        if exe_result == True:
+            user_data = self.cursor.fetchone()
+            if user_data is None:
+                return None
+            else:
+                return dict(zip(self.property, user_data))
         else:
-            return dict(zip(self.property, user_data))
+            return exe_result
+
+
     
     def delete_user_by_id(self, id:str):
         """id에 해당하는 사용자를 삭제한다."""
@@ -46,10 +52,8 @@ class User(Model):
             table_name=self.table_name,
             condition=f'WHERE id="{id}"'
         )
-        try:
-            self.cursor.execute(query)
-            self.conn.commit()
-            return True
-        except Exception as e:
-            return e
-
+        exe_result = self.execute_by_cursor(query)
+        if exe_result == True:
+            return self.commit_by_conn()
+        else:
+            return exe_result
