@@ -25,7 +25,9 @@ class User(Model):
             return True
         except Exception as e:
             return e
-        
+        finally:
+            self.cursor.close()
+
     def get_user_by_single_property(self, property, input_property):
         """한 속성에 해당하는 속성값을 통해 사용자를 찾는다"""
         query = self.select_query.format(
@@ -35,6 +37,7 @@ class User(Model):
         )
         self.cursor.execute(query)
         user_data = self.cursor.fetchone()
+        self.cursor.close()
         if user_data is None:
             return None
         else:
@@ -52,4 +55,6 @@ class User(Model):
             return True
         except Exception as e:
             return e
+        finally:
+            self.cursor.close()
 

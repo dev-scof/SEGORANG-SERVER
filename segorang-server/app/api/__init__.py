@@ -14,7 +14,6 @@ def init_app(app: Flask):
 
     @app.before_request
     def register_db_connection():
-        current_app.logger.info("Get Database Connection")
         register_connection_pool(current_app)
 
     @app.after_request
@@ -71,5 +70,4 @@ def init_app(app: Flask):
     @app.teardown_appcontext
     def close_db(exception):
         if hasattr(current_app, 'db'):
-            current_app.logger.info("Close Database Connection")
             current_app.db.close()
