@@ -20,7 +20,7 @@ def make_shell_context():
 @application.cli.command()
 def db_init():
     """First, run the Database init controller."""
-    model.init_app(config)
+    model.init_db(config)
 
 
 @application.cli.command()

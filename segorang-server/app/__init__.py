@@ -42,7 +42,6 @@ def create_sesco_app(config):
     api.init_app(app)
     jwt_manager.init_app(app)
     cors.init_app(app)
-    register_connection_pool(app)
     # Init s3 controller
     app.s3 = S3Controller(
         aws_access_key_id=config.S3_ACCESS_KEY_ID,

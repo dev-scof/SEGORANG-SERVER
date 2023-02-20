@@ -4,17 +4,18 @@ API Request Handler and util
 import json
 from flask import Flask, g, current_app, request, Response
 from loguru import logger
-
+from model import register_connection_pool, init_db
 
 def init_app(app: Flask):
 
     @app.before_first_request
     def before_first_request():
-        pass
+        init_db()
 
     @app.before_request
-    def before_request():
-        pass
+    def register_db_connection():
+        current_app.logger.info("Get Database Connection")
+        register_connection_pool(current_app)
 
     @app.after_request
     def after_request(response):
@@ -68,5 +69,7 @@ def init_app(app: Flask):
         pass
 
     @app.teardown_appcontext
-    def teardown_appcontext(exception):
-        pass
+    def close_db(exception):
+        if hasattr(current_app, 'db'):
+            current_app.logger.info("Close Database Connection")
+            current_app.db.close()

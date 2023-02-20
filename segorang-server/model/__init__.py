@@ -7,11 +7,11 @@ from model import mysql
 
 
 def register_connection_pool(app: Flask):
-    app.db = mysql.get_cursor()
+    app.db = mysql.get_conn()
     pass
 
 
-def init_app(config):
+def init_db(config=None):
     """Model Init Function"""
 
     # MongoDB Init

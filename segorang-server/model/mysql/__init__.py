@@ -6,7 +6,7 @@ MODELS = [
     User, Board
 ]
 
-def get_cursor(
+def get_conn(
         host=config.MYSQL_HOST,
         port=config.MYSQL_PORT,
         user=config.MYSQL_USER,
@@ -36,7 +36,7 @@ class ModelInitializer:
     
     @property
     def cursor(self):
-        return get_cursor(
+        return get_conn(
             host=self.host,
             port=self.port,
             user=self.user,
