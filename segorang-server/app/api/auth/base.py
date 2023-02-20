@@ -25,7 +25,7 @@ def signin_api(
     pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
 ):
     """로그인 API"""
-    user_model = User(current_app.conn)
+    user_model = User(current_app.db)
     model_res = user_model.get_user_by_single_property('id', id)
 
     if model_res is None:
@@ -56,7 +56,7 @@ def auth_signup_api(
     sejong_auth=Json(bool)
 ):
     """회원가입 API"""
-    user_model = User(current_app.conn)
+    user_model = User(current_app.db)
     model_res = user_model.insert_user({
         'sj_id':sj_id,
         'id':id,
@@ -82,7 +82,7 @@ def auth_signup_api(
 def auth_withdrawal_api():
     """회원 탈퇴 API"""
     user_id = get_jwt_identity()
-    user_model = User(current_app.conn)
+    user_model = User(current_app.db)
     model_res = user_model.delete_user_by_id(user_id)
     if model_res:
         return no_content
@@ -98,7 +98,7 @@ def auth_check_duplicate_id_api(
     id=Json(str, rules=[MinLen(5), MaxLen(20)])
 ):
     """ID 중복 확인"""
-    user_model = User(current_app.conn)
+    user_model = User(current_app.db)
     model_res = user_model.get_user_by_single_property('id', id)
     res = {}
     if model_res is None:
@@ -115,7 +115,7 @@ def auth_check_duplicate_nickname_api(
     nickname=Json(str, rules=[MinLen(3), MaxLen(20)])
 ):
     """NICKNAME 중복 확인"""
-    user_model = User(current_app.conn)
+    user_model = User(current_app.db)
     model_res = user_model.get_user_by_single_property('nickname', nickname)
     res = {}
     if model_res is None:

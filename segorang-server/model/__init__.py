@@ -7,7 +7,7 @@ from model import mysql
 
 
 def register_connection_pool(app: Flask):
-    app.conn = mysql.get_connection()
+    app.db = mysql.get_cursor()
     pass
 
 
