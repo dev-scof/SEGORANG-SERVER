@@ -76,7 +76,7 @@ def auth_signup_api(
     return response_200()
 
 
-@api.delete("/")
+@api.delete("")
 @login_required
 @timer
 def auth_withdrawal_api():
