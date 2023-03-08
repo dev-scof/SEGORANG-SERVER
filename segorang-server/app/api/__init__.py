@@ -48,8 +48,9 @@ def init_app(app: Flask):
                 'params': request.data.decode(),
                 'status_code': status_code
             }
-            if 'user_id' in g:
-                log_documnet['user_id'] = g.user_id
+            if 'user_oid' in g:
+                log_documnet['user_id'] = g.user_oid
+            Log(current_app.db).insert_log(log_documnet)
 
         # Warning Message
         if 'warn_msg' in g:
