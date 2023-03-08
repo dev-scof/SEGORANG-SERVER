@@ -11,11 +11,10 @@ from MySQLdb import IntegrityError
 from config import config
 from datetime import timedelta
 from config import Config
+from . import api_v1 as api
 from model.mysql.board import Board
 from controller.file_util import upload_to_s3
 from uuid import uuid4
-from . import api_v1 as api
-
 @api.post('/board/post')
 @timer
 @login_required
