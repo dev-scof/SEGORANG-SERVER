@@ -10,10 +10,10 @@ WORKDIR /home/SEGORANG-SERVER/
 RUN pip install --upgrade pip && \
 	pip install -r requirements.txt
 
-EXPOSE 50505
+EXPOSE 7000
 
 CMD ["gunicorn","-w","2", \
-	"--bind","0.0.0.0:50505", \
+	"--bind","0.0.0.0:7000", \
 	"--log-level", "debug", \
 	"--access-logfile", "-", \
 	"--access-logformat", "%(h)s [ACCESS] %(l)s %(u)s %(t)s '%(r)s' %(s)s %(b)s '%(f)s' '%(a)s'", \
