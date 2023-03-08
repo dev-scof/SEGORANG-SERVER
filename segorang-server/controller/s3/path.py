@@ -12,6 +12,8 @@ PATHS = {
     'detection': "detection/%s",
     # 문의
     'help': "help/%s",
+    # 게시글
+    'post': "post/%s",
     # 언노운이 생기질 않길 바랍니다...
     'unknown': "unknown/%s",
 }
