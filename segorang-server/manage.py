@@ -4,11 +4,11 @@ Application Main Manage Module
 import click
 from flask_jwt_extended import create_access_token
 from config import config, APP_NAME
-from app import create_app
+from app import create_sesco_app
 import model
 
 
-application = create_app(config)
+application = create_sesco_app(config)
 
 
 @application.shell_context_processor
