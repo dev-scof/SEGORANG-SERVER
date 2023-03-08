@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS board;
 CREATE TABLE IF NOT EXISTS board
 (
-    id              VARCHAR(20)     NOT NULL    PRIMARY KEY,
+    id              INTEGER         NOT NULL    AUTO_INCREMENT      PRIMARY KEY,
     user_id         VARCHAR(20)     NOT NULL,
-    user_nickname   VARCHAR(20)     NOT NULL    UNIQUE KEY,
+    nickname        VARCHAR(20)     NOT NULL,
     category        VARCHAR(20)     NOT NULL,
     title           VARCHAR(20)     NOT NULL,
     content         VARCHAR(1000)   NOT NULL,
