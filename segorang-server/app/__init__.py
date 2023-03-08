@@ -33,7 +33,7 @@ class CustomJSONEncoder(JSONEncoder):
             return super().default(obj)
 
 
-def create_sesco_app(config):
+def create_app(config):
     app = Flask(import_name=__name__)
 
     app.json_encoder = CustomJSONEncoder
