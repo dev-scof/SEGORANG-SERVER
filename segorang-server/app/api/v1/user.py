@@ -17,9 +17,6 @@ from . import api_v1 as api
 @login_required
 def api_v1_get_users_me():
     """내 정보 반환 API"""
-    result = None #User(current_app.db).get_userinfo(g.user_oid)
-    del result['password']
     return response_200(
-        result
     )
 
