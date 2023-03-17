@@ -10,7 +10,7 @@ def init_app(app: Flask):
 
     @app.before_first_request
     def before_first_request():
-        init_db()
+        pass
 
     @app.before_request
     def register_db_connection():

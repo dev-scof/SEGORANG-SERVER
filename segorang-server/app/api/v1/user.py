@@ -9,8 +9,23 @@ from app.api.decorator import login_required, timer
 from app.api.validation import ObjectIdValid
 from controller.util import remove_none_value
 from controller.file_util import upload_to_s3
+from model.mysql.user import User
 from . import api_v1 as api
 
+
+@api.get('/user')
+@timer
+@login_required
+def api_v1_get_user():
+    user_model = User(current_app.db)
+    model_res = user_model.get_user_by_single_property('id', g.user_id)
+    res={
+        'id': model_res.get('id'),
+        'name': model_res.get('name'),
+        'nickname': model_res.get('nickname'),
+        'major': model_res.get('major')
+    }
+    return response_200(res)
 
 @api.get("/users/me")
 @timer
@@ -18,5 +33,8 @@ from . import api_v1 as api
 def api_v1_get_users_me():
     """내 정보 반환 API"""
     return response_200(
+        {
+            'test':"?dd?"
+        }
     )
 
