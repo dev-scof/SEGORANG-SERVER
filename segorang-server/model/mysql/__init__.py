@@ -2,8 +2,9 @@ from config import config
 import MySQLdb
 from .user import User
 from .board import Board
+from .post import Post
 MODELS = [
-    User, Board
+    Post, Board, User
 ]
 
 def get_conn(
@@ -48,7 +49,6 @@ class ModelInitializer:
         """Initializer All Process"""
         with self.cursor as cur:
             self.init_tables(cur)
-
     @staticmethod
     def init_tables(cur):
         """Create Table each Tables"""
