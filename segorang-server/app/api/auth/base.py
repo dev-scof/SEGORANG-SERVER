@@ -61,17 +61,19 @@ def auth_signup_api(
         'sj_id':sj_id,
         'id':id,
         'pw':pw,
-        'name':name,
+        'user_name':name,
         'major':major,
         'nickname':nickname,
-        'sejong_auth':sejong_auth,
-        'version':user_model.VERSION
+        'sejong_auth':sejong_auth
     })
-    
-    # error 발생시
+
+    # 중복 error 발생시
     if isinstance(model_res, IntegrityError):
         return conflict("Duplicate key or Foreign Key Constraint fail")
-        
+    # 이외 다른 예외 발생시
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+
     # 회원가입 완료
     return response_200()
 
