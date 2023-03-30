@@ -21,7 +21,7 @@ def api_v1_get_user():
     model_res = user_model.get_user_by_single_property('id', g.user_id)
     res={
         'id': model_res.get('id'),
-        'name': model_res.get('name'),
+        'name': model_res.get('user_name'),
         'nickname': model_res.get('nickname'),
         'major': model_res.get('major')
     }
