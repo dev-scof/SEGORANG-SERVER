@@ -8,8 +8,8 @@ class User(Model):
     @property
     def property(self):
         return [
-            'id', 'sj_id', 'nickname', 
-            'pw', 'name', 'major', 
+            'id', 'sj_id', 'nickname',
+            'user_name', 'pw', 'major', 
             'is_admin', 'sejong_auth', 
             'created_at', 'updated_at', 'version']
 
