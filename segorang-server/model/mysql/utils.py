@@ -13,3 +13,8 @@ def get_fields_data(data:dict):
         keys.append(k)
         values.append(v)
     return keys, values
+
+def none_to_null(data):
+    if data is None:
+        return "NULL"
+    

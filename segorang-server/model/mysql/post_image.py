@@ -1,7 +1,7 @@
 from .base import Model
 from .utils import get_fields_data, set_quote
 
-class Post(Model):
+class Post_Image(Model):
 
     VERSION = 1
 
@@ -13,7 +13,7 @@ class Post(Model):
             'created_at', 'updated_at',
             'user_id', 'board_id']
 
-    def insert_post(self, post_data:dict):
+    def insert_post_image(self, post_data:dict):
         keys, values = get_fields_data(post_data)
         query = self.insert_query.format(
             table_name=self.table_name,

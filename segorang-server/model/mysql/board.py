@@ -80,3 +80,19 @@ class Board(Model):
             return None
         else:            
             return list(map(lambda x:dict(zip(self.property, x)),board_data))
+    
+    def get_board_id_by_title(self, title):
+        '''
+        제목에 해당하는 게시판 id 반환
+        '''
+        query = self.select_query.format(
+            table_name = self.table_name,
+            property = 'id',
+            condition=f'WHERE title={set_quote(title)}'
+        )
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        if result is None:
+            return None
+        else:
+            return result
