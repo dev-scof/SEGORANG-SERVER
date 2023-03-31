@@ -51,16 +51,18 @@ class Post(Model):
                                 ON post.id=post_image.post_id\
                   WHERE post.id={post_id};'
         self.cursor.execute(query)
-        post_data = list(self.cursor.fetchone())
+        post_data = self.cursor.fetchone()
+        if post_data is None:
+            return None
         # 좋아요를 눌렀는지 확인하는 쿼리
         query = f'SELECT * FROM post_like WHERE user_id={set_quote(user_id)}'
         self.cursor.execute(query)
         res = self.cursor.fetchone()
         
         if res is None:
-            post_data.append(False)
+            list(post_data).append(False)
         else:
-            post_data.append(True)
+            list(post_data).append(True)
         
         self.cursor.close()
         if post_data is None:

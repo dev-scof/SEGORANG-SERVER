@@ -71,4 +71,6 @@ def get_post_api(
 ):
     post_model = Post(current_app.db)
     model_res = post_model.get_post_by_postid(post_id, g.user_id)
+    if model_res is None:
+        return no_content
     return response_200(model_res)
