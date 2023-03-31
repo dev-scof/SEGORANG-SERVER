@@ -1,10 +1,10 @@
 from flask import current_app, g
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Route
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
-from app.api.response import response_200, bad_request, forbidden, no_content, conflict, unauthorized
+from app.api.response import response_200, bad_request, forbidden, no_content, conflict, unauthorized, created
 from app.api.decorator import timer, login_required, admin_required
 from model.mysql.user import User
 from MySQLdb import IntegrityError
@@ -56,4 +56,15 @@ def create_post_api(
             'img_path':images,
             'post_id':model_res
         })
-    return response_200()
+    return created
+
+@api.get('/post/<post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def get_post_api(
+    post_id: int = Route(int)
+):
+    post_model = Post(current_app.db)
+    model_res = post_model.get_post_by_postid(post_id)
+    return response_200(model_res)
