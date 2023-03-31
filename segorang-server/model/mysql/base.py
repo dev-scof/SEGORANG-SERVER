@@ -40,3 +40,4 @@ class Model(metaclass=ABCMeta):
         """Create Table"""
         sql = open(f"model/mysql/sqls/tables/{self.table_name}.sql").read()
         self.cursor.execute(sql)
+        

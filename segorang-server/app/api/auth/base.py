@@ -52,8 +52,7 @@ def auth_signup_api(
     pw=Json(str, rules=[MinLen(8), MaxLen(16)]),
     name=Json(str, rules=[MinLen(1), MaxLen(20)]),
     major=Json(str, rules=[MinLen(1), MaxLen(20)]),
-    nickname=Json(str, rules=[MinLen(3), MaxLen(20)]),
-    sejong_auth=Json(bool)
+    nickname=Json(str, rules=[MinLen(3), MaxLen(20)])
 ):
     """회원가입 API"""
     user_model = User(current_app.db)
@@ -63,8 +62,7 @@ def auth_signup_api(
         'pw':pw,
         'user_name':name,
         'major':major,
-        'nickname':nickname,
-        'sejong_auth':sejong_auth
+        'nickname':nickname
     })
 
     # 중복 error 발생시

@@ -34,7 +34,7 @@ def create_board_api(
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
 
-    # 게시글 추가 완료
+    # 게시판 추가 완료
     return response_200()
 
 @api.delete('/board')
