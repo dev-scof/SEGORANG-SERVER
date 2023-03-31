@@ -15,7 +15,6 @@ from . import api_v1 as api
 from model.mysql.board import Board
 from model.mysql.post import Post
 from model.mysql.post_image import Post_Image
-from model.mysql.utils import none_to_null
 from controller.file_util import upload_to_s3
 from controller.util import remove_none_value
 from uuid import uuid4
@@ -39,13 +38,18 @@ def create_post_api(
         return bad_request(f"{board_title} is not exist board")
     post_model = Post(current_app.db)
     # post에 추가
-    model_res = post_model.insert_post({
+    post_data = {
         'title':post_title,
         'content':content,
-        'category': none_to_null(category),
         'user_id':g.user_id,
         'board_id':board_id[0]
-    })
+    }
+    # category가 None이 아니면 추가
+    if category is not None:
+        post_data['category']=category
+    model_res = post_model.insert_post(post_data)
+    
+
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
     
@@ -66,5 +70,5 @@ def get_post_api(
     post_id: int = Route(int)
 ):
     post_model = Post(current_app.db)
-    model_res = post_model.get_post_by_postid(post_id)
+    model_res = post_model.get_post_by_postid(post_id, g.user_id)
     return response_200(model_res)
