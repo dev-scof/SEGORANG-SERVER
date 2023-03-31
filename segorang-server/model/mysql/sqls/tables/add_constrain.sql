@@ -40,7 +40,8 @@ ALTER TABLE `comment_like`
 
 ALTER TABLE `post_image`
     ADD CONSTRAINT `FK_post_TO_post_image_1` FOREIGN KEY (`post_id`)
-    REFERENCES `post` (`id`);
+    REFERENCES `post` (`id`)
+    ON DELETE CASCADE;
 
 ALTER TABLE `bookmark`
     ADD CONSTRAINT `FK_user_TO_bookmark_1` FOREIGN KEY (`user_id`)

@@ -31,16 +31,20 @@ class Post(Model):
             self.cursor.close()
 
     def get_post_by_postid(self, post_id:int, user_id):
-        keys = ['post_title', 'board_title', 'writer', 
-                'content', 'category', 'images', 'view_num', 
-                'created_at', 'updated_at', 'like_num', 'is_like']
+        keys = ['post_id', 'post_title', 'post_category', 'post_content',
+                'post_view_cnt','post_created_at','post_updated_at',
+                'post_user_id', 'post_board_id', 
+                'board_title', 'user_nickname', 'user_name', 'user_major',
+                'user_sj_id', 'post_img_path', 'like_cnt', 'is_like']
         # 게시물 정보를 얻어오는 쿼리
-        query = f'SELECT post.title, board.title, user.nickname, \
-                        post.content, post.category, post_image.img_path,\
-                        post.view_cnt, post.created_at, post.updated_at, \
+        query = f'SELECT post.id, post.title, post.category, post.content,\
+                        post.view_cnt, post.created_at, post.updated_at,\
+                        post.user_id, post.board_id, \
+                        board.title, user.nickname, user.user_name, user.major,\
+                        user.sj_id, post_image.img_path,\
                         (\
                             SELECT COUNT(*)\
-                            FROM post_image\
+                            FROM post_like\
                             WHERE post_id={post_id}\
                         )\
                   FROM post JOIN board \
@@ -53,19 +57,31 @@ class Post(Model):
         self.cursor.execute(query)
         post_data = self.cursor.fetchone()
         if post_data is None:
+            # 게시물이 없을 경우 -> None 반환
             return None
         # 좋아요를 눌렀는지 확인하는 쿼리
+        post_data = list(post_data)
         query = f'SELECT * FROM post_like WHERE user_id={set_quote(user_id)}'
         self.cursor.execute(query)
         res = self.cursor.fetchone()
-        
+        print(res)
         if res is None:
-            list(post_data).append(False)
+            post_data.append(False)
         else:
-            list(post_data).append(True)
+            post_data.append(True)
         
-        self.cursor.close()
-        if post_data is None:
-            return None
-        else:
-            return dict(zip(keys, post_data))
+        return dict(zip(keys, post_data))
+
+    def delete_post_by_postid(self, post_id:int):
+        query = self.delete_query.format(
+            table_name=self.table_name,
+            condition=f'WHERE id={post_id}'
+        )
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            return e
+        finally:
+            self.cursor.close()
