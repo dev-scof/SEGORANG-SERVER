@@ -29,3 +29,19 @@ class Post_Image(Model):
             return e
         finally:
             self.cursor.close()
+    
+    def update_post_image(self, img_path, post_id):
+        query = self.update_query.format(
+            table_name=self.table_name,
+            update_data=f'img_path={set_quote(img_path)}',
+            condition=f'WHERE id={post_id}'
+        )
+        print(query)
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            return e
+        finally:
+            self.cursor.close()
