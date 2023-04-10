@@ -100,7 +100,7 @@ def delete_post_api(
     model_res = post_model.get_post_by_postid(post_id, g.user_id)
     # post_id에 해당하는 게시물이 없으면
     if model_res is None:
-        return bad_request('Ther are no posts.')
+        return bad_request('There are no posts.')
 
     # 현재 사용자가 작성자가 아닌 경우
     if model_res.get('post_user_id') != g.user_id:
@@ -108,6 +108,44 @@ def delete_post_api(
     
     model_res = post_model.delete_post_by_postid(post_id)
     if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    print(model_res)
+    return response_200()
+
+@api.patch('/post/<post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def update_post_api(
+    post_id: int = Route(int),
+    title=Json(str, rules=[MinLen(1), MaxLen(100)]),
+	content=Json(str, rules=[MinLen(1), MaxLen(2000)]),
+	images=Json(str, rules=[MaxLen(200)],optional=True),
+	category=Json(str, rules=[MinLen(1), MaxLen(10)], optional=True),
+):
+    post_model = Post(current_app.db)
+    model_res = post_model.get_post_by_postid(post_id, g.user_id)
+    # post_id에 해당하는 게시물이 없으면
+    if model_res is None:
+        return bad_request('There are no posts.')
+
+    # 현재 사용자가 작성자가 아닌 경우
+    if model_res.get('post_user_id') != g.user_id:
+        return unauthorized('You do not have permission.')
+    post_data = {
+        'title': title,
+        'content': content,
+        'category': category
+    }
+    model_res = post_model.update_post_by_postid(post_id, post_data)
+    
+    # TODO: image가 있으면 post_image에 추가해야한다.
+    if images is not None:
+        post_img_model = Post_Image(current_app.db)
+        img_model_res = post_img_model.update_post_image(images, post_id)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    if isinstance(img_model_res, Exception):
         return bad_request(model_res.__str__())
     print(model_res)
     return response_200()

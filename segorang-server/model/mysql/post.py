@@ -85,3 +85,19 @@ class Post(Model):
             return e
         finally:
             self.cursor.close()
+
+    def update_post_by_postid(self, post_id:int, post_data:dict):
+        query = self.update_query.format(
+            table_name=self.table_name,
+            update_data=', '.join(map(lambda x:x[0]+'='+set_quote(x[1]), list(post_data.items()))),
+            condition=f'WHERE id={post_id}'
+        )
+        print(query)
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            return e
+        finally:
+            self.cursor.close()
