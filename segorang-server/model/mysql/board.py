@@ -95,4 +95,25 @@ class Board(Model):
         if result is None:
             return None
         else:
-            return result
+            return result[0]
+        
+    def get_post_list(self, board_title):
+        '''
+        제목에 해당하는 게시물 반환하기
+        '''
+        query = self.select_query.format(
+            table_name = self.table_name 
+                    + f' JOIN post ON board.id = post.board_id'
+                      f' JOIN user ON user.id = post.user_id'
+                      f' JOIN post_image ON post.id = post_image.post_id'
+                      f' LEFT OUTER JOIN comment ON post.id = comment.post_id',
+            property = "post.id, board.title, user.nickname, post.category, post_image.img_path, post.created_at, post.updated_at, post.view_cnt",
+            condition=""
+        )
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        if result is None:
+            return None
+        else:
+            keys = ['post_id', 'board_title', 'writer', 'category', 'image', 'created_at', 'updated_at', 'view_num']
+            return list(map(lambda x:dict(zip(keys, x)),result))

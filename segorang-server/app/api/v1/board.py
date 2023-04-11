@@ -1,6 +1,6 @@
 from flask import current_app, g
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Query, Route
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
@@ -89,23 +89,25 @@ def get_boards_api():
     return response_200(
         model_res
     )
-# @api.post('/board/image')
-# @timer
-# @login_required
-# @Validator(bad_request)
-# def upload_img_api(
-#     img: File = File(
-#         rules=[
-#             Ext(['.png', '.jpg', '.jpeg', '.gif', '.heic']),
-#             MaxFileCount(1)
-#         ]
-#     )
-# ):
-#     return response_200(
-#         upload_to_s3(
-#             s3=current_app.s3,
-#             files=img,
-#             type="post",
-#             object_id=f"{g.user_id}_{uuid4()}"
-#         )
-#     )
+
+@api.get('/board/<board_title>')
+@timer
+@login_required
+@Validator(bad_request)
+def get_postlist_api(
+    board_title=Route(str),
+    page=Query(int),
+    limit=Query(int)
+):
+    '''
+    게시판 목록 반환
+    '''
+    board_model = Board(current_app.db)
+    if board_model.get_board_id_by_title(
+        board_title) is None:
+        return bad_request(f"{board_title} is not exist")
+    model_res = board_model.get_post_list(board_title)
+
+    return response_200(model_res)
+    # model_res = board_model.get_post_list()
+    # print(page, limit)
