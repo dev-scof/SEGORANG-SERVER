@@ -15,6 +15,7 @@ from . import api_v1 as api
 from model.mysql.board import Board
 from model.mysql.post import Post
 from model.mysql.post_image import Post_Image
+from model.mysql.post_like import Post_Like
 from controller.file_util import upload_to_s3
 from controller.util import remove_none_value
 from uuid import uuid4
@@ -22,7 +23,7 @@ from uuid import uuid4
 @timer
 @login_required
 @Validator(bad_request)
-def create_post_api(
+def post_insert_api(
     post_title=Json(str, rules=[MinLen(1), MaxLen(100)]),
 	board_title=Json(str, rules=[MinLen(1), MaxLen(10)]),
 	category=Json(str, rules=[MinLen(1), MaxLen(10)], optional=True),
@@ -66,7 +67,7 @@ def create_post_api(
 @timer
 @login_required
 @Validator(bad_request)
-def get_post_api(
+def post_get_api(
     post_id: int = Route(int)
 ):
     '''
@@ -96,7 +97,7 @@ def get_post_api(
 @timer
 @login_required
 @Validator(bad_request)
-def delete_post_api(
+def post_delete_api(
     post_id: int = Route(int)
 ):
     post_model = Post(current_app.db)
@@ -119,7 +120,7 @@ def delete_post_api(
 @timer
 @login_required
 @Validator(bad_request)
-def update_post_api(
+def post_update_api(
     post_id: int = Route(int),
     title=Json(str, rules=[MinLen(1), MaxLen(100)]),
 	content=Json(str, rules=[MinLen(1), MaxLen(2000)]),
@@ -153,3 +154,69 @@ def update_post_api(
     print(model_res)
     return response_200()
     
+@api.post('/post/img')
+@timer
+@login_required
+@Validator(bad_request)
+def post_img_upload_api(
+    post_img: File = File(
+        rules=[
+            Ext(['.png', '.jpg', '.jpeg', '.gif', '.heic']),
+            MaxFileCount(1)
+        ]
+    )
+):
+    """ 게시물 사진 업로드 API"""
+    return response_200(
+        upload_to_s3(
+            s3=current_app.s3,
+            files=post_img,
+            type="post",
+            object_id=f"{g.user_id}_{uuid4()}"
+        )[0]
+    )
+
+@api.post('post/like/<post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def post_like_insert_api(
+    post_id: int = Route(int)
+):
+    """ 게시물 좋아요 생성 API"""
+    model = Post_Like(current_app.db)
+    model_res = model.insert_like(g.user_id, post_id)
+    
+    if isinstance(model_res, Exception):
+        
+        return conflict(model_res.__str__())
+    else:
+        return response_200()
+    
+@api.delete('post/like/<post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def post_like_delete_api(
+    post_id: int = Route(int)
+):
+    """ 게시물 좋아요 삭제 API """
+    model = Post_Like(current_app.db)
+    model_res = model.delete_like(g.user_id, post_id)
+    print(model_res)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    else:
+        return no_content
+
+@api.get('post/like/<post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def post_like_cnt_get_api(
+    post_id: int = Route(int)
+):
+    """ 게시물 좋아요 수 반환 API"""
+    model = Post_Like(current_app.db)
+    model_res = model.get_like_cnt(post_id)
+    return response_200(model_res)

@@ -16,7 +16,7 @@ from . import api_v1 as api
 @api.get('/user')
 @timer
 @login_required
-def api_v1_get_user():
+def user_get_api():
     user_model = User(current_app.db)
     model_res = user_model.get_user_by_single_property('id', g.user_id)
     res={
@@ -26,15 +26,4 @@ def api_v1_get_user():
         'major': model_res.get('major')
     }
     return response_200(res)
-
-@api.get("/users/me")
-@timer
-@login_required
-def api_v1_get_users_me():
-    """내 정보 반환 API"""
-    return response_200(
-        {
-            'test':"?dd?"
-        }
-    )
 
