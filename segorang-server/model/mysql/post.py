@@ -92,7 +92,6 @@ class Post(Model):
             update_data=', '.join(map(lambda x:x[0]+'='+set_quote(x[1]), list(post_data.items()))),
             condition=f'WHERE id={post_id}'
         )
-        print(query)
         try:
             self.cursor.execute(query)
             self.conn.commit()

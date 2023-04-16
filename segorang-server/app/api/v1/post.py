@@ -42,7 +42,7 @@ def create_post_api(
         'title':post_title,
         'content':content,
         'user_id':g.user_id,
-        'board_id':board_id[0]
+        'board_id':board_id
     }
     # category가 None이 아니면 추가
     if category is not None:
@@ -69,6 +69,9 @@ def create_post_api(
 def get_post_api(
     post_id: int = Route(int)
 ):
+    '''
+    특정 게시물 반환 API
+    '''
     post_model = Post(current_app.db)
     model_res = post_model.get_post_by_postid(post_id, g.user_id)
     if model_res is None:
