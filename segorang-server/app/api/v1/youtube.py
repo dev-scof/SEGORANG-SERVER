@@ -16,7 +16,7 @@ from . import api_v1 as api
 @api.get('/youtube')
 @timer
 @login_required
-def api_v1_get_youtube():
+def youtube_get_api():
     return response_200([
         {
             'thumbNail':'https://i.ytimg.com/vi/__092GlqCUw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD4C6IcOdd3cleTDtGQMQCNW8AVnA',

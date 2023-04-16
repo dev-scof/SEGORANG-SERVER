@@ -20,7 +20,7 @@ import math
 @timer
 @admin_required
 @Validator(bad_request)
-def create_board_api(
+def board_insert_api(
     title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
     '''
@@ -41,7 +41,7 @@ def create_board_api(
 @timer
 @admin_required
 @Validator(bad_request)
-def delete_board_api(
+def board_delete_api(
     title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
     '''
@@ -58,7 +58,7 @@ def delete_board_api(
 @timer
 @admin_required
 @Validator(bad_request)
-def update_board_api(
+def board_update_api(
     pre_title=Json(str, rules=[MinLen(1), MaxLen(20)]),
     nex_title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
@@ -76,7 +76,7 @@ def update_board_api(
 @timer
 @admin_required
 @Validator(bad_request)
-def get_boards_api():
+def board_get_api():
     '''
     모든 게시판 반환
     '''
@@ -94,7 +94,7 @@ def get_boards_api():
 @timer
 @login_required
 @Validator(bad_request)
-def get_postlist_api(
+def board_get_post_list_api(
     board_title=Route(str),
     page=Query(int, rules=Min(1)),
     limit=Query(int, rules=Min(1))

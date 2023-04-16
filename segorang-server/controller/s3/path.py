@@ -8,8 +8,6 @@ from config import config
 PATHS = {
     # 프로필 이미지
     'profile': "profile/%s",
-    # 탐지 이미지
-    'detection': "detection/%s",
     # 문의
     'help': "help/%s",
     # 게시글
