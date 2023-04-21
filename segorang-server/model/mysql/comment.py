@@ -8,8 +8,9 @@ class Comment(Model):
     @property
     def property(self):
         return [
-            'id', 'title',
+            'id', 'content', 'parent_comment_id',
             'created_at', 'updated_at'
         ]
 
-    
+    def insert_comment(self, comment_data):
+        pass
