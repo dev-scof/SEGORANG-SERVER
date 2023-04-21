@@ -1,5 +1,5 @@
 ALTER TABLE `comment` 
-    ADD CONSTRAINT `FK_comment_TO_comment_1` FOREIGN KEY (`parrent_comment_id`)
+    ADD CONSTRAINT `FK_comment_TO_comment_1` FOREIGN KEY (`parent_comment_id`)
     REFERENCES `comment` (`id`);
 
 ALTER TABLE `comment`

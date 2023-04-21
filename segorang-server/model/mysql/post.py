@@ -64,7 +64,6 @@ class Post(Model):
         query = f'SELECT * FROM post_like WHERE user_id={set_quote(user_id)}'
         self.cursor.execute(query)
         res = self.cursor.fetchone()
-        print(res)
         if res is None:
             post_data.append(False)
         else:
