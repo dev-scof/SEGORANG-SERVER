@@ -28,7 +28,7 @@ from uuid import uuid4
 @Validator(bad_request)
 def comment_insert_api(
     content=Json(str, rules=[MinLen(1), MaxLen(300)]),
-    parent_comment_id=Json(int, Min(0), default=0),
+    parent_comment_id=Json(int, rules=[Min(0)], optional=True),
     post_id=Json(int)
 ):
     '''
@@ -37,9 +37,32 @@ def comment_insert_api(
     comment_model = Comment(current_app.db)
     comment_data = {
         'content':content,
-        'parent_comment_id':parent_comment_id,
         'user_id':g.user_id,
         'post_id':post_id
     }
-    print(comment_data)
+    if parent_comment_id:
+        comment_data['parent_comment_id'] = parent_comment_id
+    model_res = comment_model.insert_comment(comment_data)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
     return created
+
+@api.delete('/comment/<int:comment_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def comment_delete_api(
+    comment_id=Route(int, rules=Min(0))
+):
+    '''
+    댓글 삭제 API
+    '''
+    comment_model = Comment(current_app.db)
+    model_res = comment_model.get_comment_by_id(['user_id'], comment_id)
+    # 다른 사람이 댓글을 삭제하는 경우
+    if model_res['user_id'] != g.user_id:
+        return unauthorized('잘못된 접근입니다.')
+    model_res = comment_model.delete_comment_by_id(comment_id)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    return no_content
