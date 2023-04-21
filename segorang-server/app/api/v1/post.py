@@ -61,7 +61,7 @@ def post_insert_api(
             'img_path':images,
             'post_id':model_res
         })
-    return created
+    return response_200(model_res)
 
 @api.get('/post/<post_id>')
 @timer
