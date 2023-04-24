@@ -87,3 +87,17 @@ def comment_patch_api(
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
     return no_content
+
+@api.get('/comment/post/<int:post_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def comment_get_api(
+    post_id=Route(int, rules=Min(0))
+):
+    '''
+    댓글 반환 API
+    '''
+    comment_model = Comment(current_app.db)
+    model_res = comment_model.get_comment_by_postid(post_id)
+    return response_200(model_res)
