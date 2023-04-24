@@ -66,3 +66,24 @@ def comment_delete_api(
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
     return no_content
+
+@api.patch('/comment/<int:comment_id>')
+@timer
+@login_required
+@Validator(bad_request)
+def comment_patch_api(
+    comment_id=Route(int, rules=Min(0)),
+    content=Json(str, rules=[MinLen(1), MaxLen(300)])
+):
+    '''
+    댓글 수정 API
+    '''
+    comment_model = Comment(current_app.db)
+    model_res = comment_model.get_comment_by_id(['user_id'], comment_id)
+    # 다른 사람이 댓글을 삭제하는 경우
+    if model_res['user_id'] != g.user_id:
+        return unauthorized('잘못된 접근입니다.')
+    model_res = comment_model.update_content_by_id(comment_id, content)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    return no_content

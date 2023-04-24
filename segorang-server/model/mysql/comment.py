@@ -63,3 +63,18 @@ class Comment(Model):
             return e
         finally:
             self.cursor.close()
+
+    def update_content_by_id(self, id, update_content):
+        query = self.update_query.format(
+            table_name=self.table_name,
+            update_data=f'content = {set_quote(update_content)}',
+            condition=f'WHERE id={id}'
+        )
+        try:
+            self.cursor.execute(query)
+            self.conn.commit()
+            return True
+        except Exception as e:
+            return e
+        finally:
+            self.cursor.close()
