@@ -1,6 +1,6 @@
 from flask import current_app, g
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Route
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Route, Min
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
@@ -68,7 +68,7 @@ def post_insert_api(
 @login_required
 @Validator(bad_request)
 def post_get_api(
-    post_id: int = Route(int)
+    post_id: int = Route(int, rules=Min(0))
 ):
     '''
     특정 게시물 반환 API
@@ -98,7 +98,7 @@ def post_get_api(
 @login_required
 @Validator(bad_request)
 def post_delete_api(
-    post_id: int = Route(int)
+    post_id: int = Route(int, rules=Min(0))
 ):
     post_model = Post(current_app.db)
     model_res = post_model.get_post_by_postid(post_id, g.user_id)
@@ -121,7 +121,7 @@ def post_delete_api(
 @login_required
 @Validator(bad_request)
 def post_update_api(
-    post_id: int = Route(int),
+    post_id: int = Route(int, rules=Min(0)),
     title=Json(str, rules=[MinLen(1), MaxLen(100)]),
 	content=Json(str, rules=[MinLen(1), MaxLen(2000)]),
 	images=Json(str, rules=[MaxLen(200)],optional=True),
@@ -176,12 +176,12 @@ def post_img_upload_api(
         )[0]
     )
 
-@api.post('post/like/<post_id>')
+@api.post('/post/like/<post_id>')
 @timer
 @login_required
 @Validator(bad_request)
 def post_like_insert_api(
-    post_id: int = Route(int)
+    post_id: int = Route(int, rules=Min(0))
 ):
     """ 게시물 좋아요 생성 API"""
     model = Post_Like(current_app.db)
@@ -193,28 +193,27 @@ def post_like_insert_api(
     else:
         return response_200()
     
-@api.delete('post/like/<post_id>')
+@api.delete('/post/like/<post_id>')
 @timer
 @login_required
 @Validator(bad_request)
 def post_like_delete_api(
-    post_id: int = Route(int)
+    post_id: int = Route(int, rules=Min(0))
 ):
     """ 게시물 좋아요 삭제 API """
     model = Post_Like(current_app.db)
     model_res = model.delete_like(g.user_id, post_id)
-    print(model_res)
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
     else:
         return no_content
 
-@api.get('post/like/<post_id>')
+@api.get('/post/like/<post_id>')
 @timer
 @login_required
 @Validator(bad_request)
 def post_like_cnt_get_api(
-    post_id: int = Route(int)
+    post_id: int = Route(int, rules=Min(0))
 ):
     """ 게시물 좋아요 수 반환 API"""
     model = Post_Like(current_app.db)

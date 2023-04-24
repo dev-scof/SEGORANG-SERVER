@@ -35,7 +35,7 @@ class Post(Model):
                 'post_view_cnt','post_created_at','post_updated_at',
                 'post_user_id', 'post_board_id', 
                 'board_title', 'user_nickname', 'user_name', 'user_major',
-                'user_sj_id', 'post_img_path', 'like_cnt', 'is_like']
+                'user_sj_id', 'post_img_path', 'like_cnt', 'is_like', 'is_deleted']
         # 게시물 정보를 얻어오는 쿼리
         query = f'SELECT post.id, post.title, post.category, post.content,\
                         post.view_cnt, post.created_at, post.updated_at,\
@@ -46,7 +46,8 @@ class Post(Model):
                             SELECT COUNT(*)\
                             FROM post_like\
                             WHERE post_id={post_id}\
-                        )\
+                        ),\
+                        post.is_deleted\
                   FROM post JOIN board \
                                 ON post.board_id=board.id \
                             JOIN user \
@@ -56,8 +57,9 @@ class Post(Model):
                   WHERE post.id={post_id};'
         self.cursor.execute(query)
         post_data = self.cursor.fetchone()
-        if post_data is None:
-            # 게시물이 없을 경우 -> None 반환
+
+        if post_data is None or post_data[-1]:
+            # 게시물이 없거나 / 삭제되었을 경우 -> None 반환
             return None
         # 좋아요를 눌렀는지 확인하는 쿼리
         post_data = list(post_data)
@@ -72,8 +74,9 @@ class Post(Model):
         return dict(zip(keys, post_data))
 
     def delete_post_by_postid(self, post_id:int):
-        query = self.delete_query.format(
+        query = self.update_query.format(
             table_name=self.table_name,
+            update_data='is_deleted = true',
             condition=f'WHERE id={post_id}'
         )
         try:
