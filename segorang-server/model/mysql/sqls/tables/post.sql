@@ -9,5 +9,6 @@ CREATE TABLE `post` (
 	`created_at`	TIMESTAMP	    NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	TIMESTAMP	    NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`user_id`	    VARCHAR(20)	    NOT NULL,
-	`board_id`	    INTEGER	        NOT NULL
+	`board_id`	    INTEGER	        NOT NULL,
+	`is_deleted`	BOOLEAN			NOT NULL	DEFAULT false
 );
