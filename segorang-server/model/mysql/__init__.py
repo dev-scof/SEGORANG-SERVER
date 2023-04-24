@@ -11,10 +11,11 @@ from .post_image import Post_Image
 from .post_like import Post_Like
 from .post_report import Post_Report
 from .user_image import User_Image
+from .youtube import Youtube
 MODELS = [
     User, User_Image, Board, Post, Bookmark, 
     Comment, Comment_Like, Comment_Report,
-    Post_Image, Post_Report, Post_Like
+    Post_Image, Post_Report, Post_Like, Youtube
 ]
 
 def get_conn(
@@ -59,6 +60,7 @@ class ModelInitializer:
         """Initializer All Process"""
         with self.cursor as cur:
             self.init_tables(cur)
+
     @staticmethod
     def init_tables(cur):
         """Create Table each Tables"""
