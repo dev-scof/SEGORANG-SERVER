@@ -1,5 +1,5 @@
 from . import api_v1 as api
-from flask import g, current_app
+from flask import g, current_app, request
 from flask_validation_extended import Json, Route, File, Query, Min
 from flask_validation_extended import Validator, MinLen, Ext, MaxFileCount, MaxLen
 from bson.objectid import ObjectId
@@ -14,8 +14,8 @@ from . import api_v1 as api
 
 @api.get('/youtube')
 @timer
-@login_required
 @Validator(bad_request)
+@login_required
 def youtube_get_api(
     page=Query(int, rules=Min(1)),
     limit=Query(int, rules=Min(1))
@@ -43,4 +43,39 @@ def youtube_insert_api(
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
     
+    return no_content
+
+@api.patch('/youtube')
+@timer
+@admin_required
+def youtube_update_api(
+    thumb_nail=Json(str, rules=MinLen(1), optional=True),
+    title=Json(str, rules=MinLen(1), optional=True),
+    link=Json(str, rules=MinLen(1), optional=True),
+    id=Json(int, rules=Min(0))
+):
+    '''
+    유튜브 정보 수정 API
+    '''
+    model = Youtube(current_app.db)
+    data = request.get_json()
+    id=data.pop('id')
+    model_res = model.update_youtube_by_id(id, data)
+
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
+    return no_content
+
+@api.delete('/youtube')
+@timer
+def youtube_delete_api(
+    id=Query(int, rules=Min(0))
+):
+    '''
+    유튜브 정보 삭제
+    '''
+    model = Youtube(current_app.db)
+    model_res = model.delete_youtube_api(id)
+    if isinstance(model_res, Exception):
+        return bad_request(model_res.__str__())
     return no_content
