@@ -48,6 +48,7 @@ def youtube_insert_api(
 @api.patch('/youtube')
 @timer
 @admin_required
+@Validator(bad_request)
 def youtube_update_api(
     thumb_nail=Json(str, rules=MinLen(1), optional=True),
     title=Json(str, rules=MinLen(1), optional=True),
@@ -68,8 +69,10 @@ def youtube_update_api(
 
 @api.delete('/youtube')
 @timer
+@admin_required
+@Validator(bad_request)
 def youtube_delete_api(
-    id=Query(int, rules=Min(0))
+    id=Query(int, rules=Min(1))
 ):
     '''
     유튜브 정보 삭제

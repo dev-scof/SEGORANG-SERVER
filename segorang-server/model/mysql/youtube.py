@@ -55,7 +55,6 @@ class Youtube(Model):
             update_data=', '.join(map(lambda x,y:x+'='+set_quote(y), keys, values)),
             condition=f'WHERE id={id}'
         )
-        print(query)
         try:
             self.cursor.execute(query)
             self.conn.commit()
