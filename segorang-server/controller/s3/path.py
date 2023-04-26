@@ -12,6 +12,8 @@ PATHS = {
     'help': "help/%s",
     # 게시글
     'post': "post/%s",
+    # 사용자 이미지
+    'user': "user/%s",
     # 언노운이 생기질 않길 바랍니다...
     'unknown': "unknown/%s",
 }
