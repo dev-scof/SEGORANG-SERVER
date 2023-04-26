@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS user;
 CREATE TABLE `user` (
 	`id`	        VARCHAR(20) NOT NULL    PRIMARY KEY,
 	`sj_id`	        VARCHAR(20)	NOT NULL	UNIQUE KEY,
-	`nickname`	    VARCHAR(15)	NOT NULL,
+	`nickname`	    VARCHAR(15)	NOT NULL	UNIQUE KEY,
 	`user_name`	    VARCHAR(20)	NOT NULL,
 	`pw`	        VARCHAR(20)	NOT NULL,
 	`major`	        VARCHAR(20)	NOT NULL,
