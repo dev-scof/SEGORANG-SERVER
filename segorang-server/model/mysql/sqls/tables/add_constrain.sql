@@ -69,3 +69,4 @@ ALTER TABLE `comment_report`
 
 ALTER TABLE `post_like` ADD UNIQUE KEY (`user_id`, `post_id`);
 ALTER TABLE `comment_like` ADD UNIQUE KEY (`user_id`, `comment_id`);
+ALTER TABLE `bookmark` ADD UNIQUE KEY (`user_id`, `post_id`);
