@@ -11,6 +11,7 @@ class S3Controller:
         aws_secret_access_key: str,
         bucket_name: str,
         bucket_domain: str,
+        bucket_acl_policy: str
     ):
         self.s3 = boto3.client(
             's3',
@@ -19,18 +20,21 @@ class S3Controller:
         )
         self.bucket_name = bucket_name
         self.bucket_domain = bucket_domain
+        self.bucket_acl_policy = bucket_acl_policy
 
     def download_fileobj(self, object_path: str):
         try:
             f = BytesIO()
-            self.s3.download_fileobj(self.bucket_name, object_path, f)
+            self.s3.download_fileobj(
+                self.bucket_name, 
+                object_path, f)
             f.seek(0)
             return f
         except ClientError as e:
             if e.response['Error']['Code'] == '404':
                 return None
             raise e
-
+        
     def upload_fileobj(
         self,
         file: BytesIO,
@@ -68,7 +72,8 @@ if __name__ == '__main__':
     s3 = S3Controller(
         config.S3_ACCESS_KEY_ID,
         config.S3_SECRET_ACCESS_KEY,
-        config.S3_BUCKET_NAME
+        config.S3_BUCKET_NAME,
+        config.S3_DOMAIN
     )
     file = BytesIO(b'asd asd')
     s3.upload_fileobj(file, 'asd.txt')
