@@ -2,14 +2,14 @@
 Application Config Setting
 '''
 import os
-from dotenv import load_dotenv
-
-load_dotenv(verbose=True)
-
-APP_NAME = "SEGORANG"
+from dotenv import load_dotenv, find_dotenv
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+APP_NAME = "SEGORANG"
 FLASK_CONFIG = os.getenv('FLASK_CONFIG') or 'development'
-
+# ENV 관리
+ENV_FILE = f'{FLASK_CONFIG}.env'
+ENV_PATH = f"{BASEDIR}/envs/{ENV_FILE}"
+load_dotenv(dotenv_path=ENV_PATH, verbose=True)
 
 class Config:
     '''General Config'''
