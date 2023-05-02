@@ -1,6 +1,6 @@
 from flask import current_app, g
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Query, Route, Min
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
@@ -15,12 +15,12 @@ from . import api_v1 as api
 from model.mysql.board import Board
 from controller.file_util import upload_to_s3
 from uuid import uuid4
-
+import math
 @api.post('/board')
 @timer
 @admin_required
 @Validator(bad_request)
-def create_board_api(
+def board_insert_api(
     title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
     '''
@@ -34,14 +34,14 @@ def create_board_api(
     if isinstance(model_res, Exception):
         return bad_request(model_res.__str__())
 
-    # 게시글 추가 완료
+    # 게시판 추가 완료
     return response_200()
 
 @api.delete('/board')
 @timer
 @admin_required
 @Validator(bad_request)
-def delete_board_api(
+def board_delete_api(
     title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
     '''
@@ -58,7 +58,7 @@ def delete_board_api(
 @timer
 @admin_required
 @Validator(bad_request)
-def update_board_api(
+def board_update_api(
     pre_title=Json(str, rules=[MinLen(1), MaxLen(20)]),
     nex_title=Json(str, rules=[MinLen(1), MaxLen(20)])
 ):
@@ -76,7 +76,7 @@ def update_board_api(
 @timer
 @admin_required
 @Validator(bad_request)
-def get_boards_api():
+def board_get_api():
     '''
     모든 게시판 반환
     '''
@@ -89,23 +89,30 @@ def get_boards_api():
     return response_200(
         model_res
     )
-# @api.post('/board/image')
-# @timer
-# @login_required
-# @Validator(bad_request)
-# def upload_img_api(
-#     img: File = File(
-#         rules=[
-#             Ext(['.png', '.jpg', '.jpeg', '.gif', '.heic']),
-#             MaxFileCount(1)
-#         ]
-#     )
-# ):
-#     return response_200(
-#         upload_to_s3(
-#             s3=current_app.s3,
-#             files=img,
-#             type="post",
-#             object_id=f"{g.user_id}_{uuid4()}"
-#         )
-#     )
+
+@api.get('/board/<board_title>')
+@timer
+@login_required
+@Validator(bad_request)
+def board_get_post_list_api(
+    board_title=Route(str),
+    page=Query(int, rules=Min(1)),
+    limit=Query(int, rules=Min(1))
+):
+    '''
+    게시판 목록 반환
+    '''
+    board_model = Board(current_app.db)
+    # 예외처리 1. board_title이 없는 경우
+    if board_model.get_board_id_by_title(
+        board_title) is None:
+        return bad_request(f"{board_title} is not exist")
+    model_res = board_model.get_post_list(board_title, page-1, limit)
+    last_page = math.ceil(board_model.get_post_count(board_title)/limit)
+    res = {
+        "data":model_res,
+        "last_page":last_page
+    }
+    return response_200(res)
+    # model_res = board_model.get_post_list()
+    # print(page, limit)

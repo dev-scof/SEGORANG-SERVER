@@ -3,13 +3,10 @@ Application Config Setting
 '''
 import os
 from dotenv import load_dotenv
-
-load_dotenv(verbose=True)
-
-APP_NAME = "SEGORANG"
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+APP_NAME = "SEGORANG"
 FLASK_CONFIG = os.getenv('FLASK_CONFIG') or 'development'
-
+load_dotenv(verbose=True)
 
 class Config:
     '''General Config'''
@@ -35,7 +32,8 @@ class Config:
     S3_BUCKET_NAME = os.environ[APP_NAME + "_S3_BUCKET_NAME"]
     S3_ACCESS_KEY_ID = os.environ[APP_NAME + "_S3_ACCESS_KEY_ID"]
     S3_SECRET_ACCESS_KEY = os.environ[APP_NAME + "_S3_SECRET_ACCESS_KEY"]
-    
+    S3_BUCKET_ACL_POLICY = os.environ[APP_NAME + "_S3_BUCKET_ACL_POLICY"]
+
     # Admin
     ADMIN_ID = os.environ[APP_NAME + '_ADMIN_ID']
     ADMIN_PW = os.environ[APP_NAME + '_ADMIN_PW']
@@ -50,7 +48,10 @@ if FLASK_CONFIG == 'development':
     class AppConfig(Config):
         DEBUG = True
         TESTING = False
-
+elif FLASK_CONFIG == 'production':
+    class AppConfig(Config):
+        DEBUG = False
+        TESTING = False
 else:
     raise Exception("Flask Config not Selected.")
 

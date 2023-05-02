@@ -48,6 +48,7 @@ def create_segorang_app(config):
         aws_secret_access_key=config.S3_SECRET_ACCESS_KEY,
         bucket_name=config.S3_BUCKET_NAME,
         bucket_domain=config.S3_DOMAIN,
+        bucket_acl_policy=config.S3_BUCKET_ACL_POLICY
     )
     
 

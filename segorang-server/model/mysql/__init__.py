@@ -3,8 +3,19 @@ import MySQLdb
 from .user import User
 from .board import Board
 from .post import Post
+from .bookmark import Bookmark
+from .comment import Comment
+from .comment_like import Comment_Like
+from .comment_report import Comment_Report
+from .post_image import Post_Image
+from .post_like import Post_Like
+from .post_report import Post_Report
+from .user_image import User_Image
+from .youtube import Youtube
 MODELS = [
-    Post, Board, User
+    User, User_Image, Board, Post, Bookmark, 
+    Comment, Comment_Like, Comment_Report,
+    Post_Image, Post_Report, Post_Like, Youtube
 ]
 
 def get_conn(
@@ -49,8 +60,17 @@ class ModelInitializer:
         """Initializer All Process"""
         with self.cursor as cur:
             self.init_tables(cur)
+
     @staticmethod
     def init_tables(cur):
         """Create Table each Tables"""
+        # Remove FK Check
+        cur.cursor().execute('SET foreign_key_checks = 0;')
+        # create tables
         for model in MODELS:
             model(cur).create_table()
+        # add constrain
+        sql = open(f"model/mysql/sqls/tables/add_constrain.sql").read()
+        cur.cursor().execute(sql)
+        # FK Check
+        cur.cursor().execute('SET foreign_key_checks = 1;')
