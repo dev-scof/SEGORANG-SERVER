@@ -2,14 +2,15 @@
 Application Config Setting
 '''
 import os
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+ROOTDIR = os.path.abspath(os.path.join(BASEDIR, os.pardir))
 APP_NAME = "SEGORANG"
 FLASK_CONFIG = os.getenv('FLASK_CONFIG') or 'development'
 # ENV 관리
 ENV_FILE = f'{FLASK_CONFIG}.env'
-ENV_PATH = f"{BASEDIR}/envs/{ENV_FILE}"
-load_dotenv(dotenv_path=ENV_PATH, verbose=True)
+ENV_PATH = os.path.join(ROOTDIR, 'requirements')
+load_dotenv(dotenv_path=os.path.join(ENV_PATH, ENV_FILE), verbose=True)
 
 class Config:
     '''General Config'''
@@ -51,7 +52,10 @@ if FLASK_CONFIG == 'development':
     class AppConfig(Config):
         DEBUG = True
         TESTING = False
-
+elif FLASK_CONFIG == 'production':
+    class AppConfig(Config):
+        DEBUG = False
+        TESTING = False
 else:
     raise Exception("Flask Config not Selected.")
 
