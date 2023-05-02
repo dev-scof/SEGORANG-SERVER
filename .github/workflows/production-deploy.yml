@@ -60,8 +60,9 @@ jobs:
         port: ${{ env.SEGORANG_PROD_PORT }}
         username: ${{ env.SEGORANG_PROD_USER }}
         key: ${{ env.SEGORANG_PROD_KEY }}
-        
+        script_stop: true
         script: |
+          ls -all
           cd segorang && \
           docker pull ${{ env.DOCKERHUB_USER }}/segorang-server:latest && \
           docker-compose stop segorang-server && \
