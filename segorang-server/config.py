@@ -7,8 +7,8 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 APP_NAME = "SEGORANG"
 FLASK_CONFIG = os.getenv('FLASK_CONFIG') or 'development'
 # ENV 관리
-ENV_FILE = f'{FLASK_CONFIG}.env'
-load_dotenv(dotenv_path=os.path.join(BASEDIR, ENV_FILE), verbose=True)
+# ENV_FILE = f'{FLASK_CONFIG}.env'
+load_dotenv(verbose=True)
 
 class Config:
     '''General Config'''
