@@ -1,0 +1,69 @@
+name: SEGORANG Development Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_S3_ACCESS_KEY: ${{ secrets.AWS_S3_ACCESS_KEY }}
+  AWS_S3_SECRET_KEY: ${{ secrets.AWS_S3_SECRET_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION}}
+  DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+  DOCKERHUB_PW: ${{ secrets.DOCKERHUB_PW }}
+  SEGORANG_PROD_HOST: ${{ secrets.SEGORANG_PROD_HOST }}
+  SEGORANG_PROD_PORT: ${{ secrets.SEGORANG_PROD_PORT }}
+  SEGORANG_PROD_USER: ${{ secrets.SEGORANG_PROD_USER }}
+  SEGORANG_PROD_KEY: ${{ secrets.SEGORANG_PROD_KEY }}
+  SEGORANG_PROD_ENV_PATH: ${{ secrets.SEGORANG_DEV_ENV_PATH }} # TODO 
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  deploy: 
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ env.DOCKERHUB_USER }}
+        password: ${{ env.DOCKERHUB_PW }}
+
+    - name: Download env file from S3
+      uses: keithweaver/aws-s3-github-action@v1.0.0
+      with:
+        command: cp
+        aws_access_key_id: ${{ env.AWS_S3_ACCESS_KEY }}
+        aws_secret_access_key: ${{ env.AWS_S3_SECRET_KEY }}
+        aws_region: ${{ env.AWS_REGION }}
+        source: ${{ env.SEGORANG_PROD_ENV_PATH }}
+        destination: './segorang-server/.env'
+
+    - name: build and release to DockerHub
+      env:
+        NAME: ${{ env.DOCKERHUB_USER }}
+        REPO: segorang-server
+      run: |
+        cd ./segorang-server
+        docker build -t $REPO .
+        docker tag $REPO:latest $NAME/$REPO:latest
+        docker push $NAME/$REPO:latest
+
+    - name: Docker Pull and Server Restart
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SEGORANG_PROD_HOST }}
+        port: ${{ env.SEGORANG_PROD_PORT }}
+        username: ${{ env.SEGORANG_PROD_USER }}
+        key: ${{ env.SEGORANG_PROD_KEY }}
+        
+        script: |
+          cd segorang && \
+          docker pull ${{ env.DOCKERHUB_USER }}/segorang-server:latest && \
+          docker-compose stop segorang-server && \
+          docker-compose rm -f segorang-server && \
+          docker-compose up -d --no-deps segorang-server
