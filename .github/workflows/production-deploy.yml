@@ -74,6 +74,7 @@ jobs:
         username: ${{ env.SEGORANG_PROD_USER }}
         key: ${{ env.SEGORANG_PROD_KEY }}
         script_stop: true
+        # envs를 통해 env를 포함시켜야 작동한다
         envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG
         script: |
           ls -all
