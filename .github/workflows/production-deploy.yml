@@ -20,7 +20,7 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  Build and Deploy:
+  Build_Deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
 
