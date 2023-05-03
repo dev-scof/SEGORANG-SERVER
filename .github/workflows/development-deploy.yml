@@ -55,8 +55,9 @@ jobs:
 
   deploy: 
     name: Deploy
+    needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Docker Pull and Server Restart
       uses: appleboy/ssh-action@master
