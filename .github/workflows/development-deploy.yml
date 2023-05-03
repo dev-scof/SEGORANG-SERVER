@@ -19,8 +19,8 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  deploy: 
-    name: Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -53,6 +53,12 @@ jobs:
         docker tag $REPO:latest $NAME/$REPO:latest
         docker push $NAME/$REPO:latest
 
+  deploy: 
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Docker Pull and Server Restart
       uses: appleboy/ssh-action@master
       with:
