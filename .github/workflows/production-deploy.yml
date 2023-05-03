@@ -74,6 +74,7 @@ jobs:
         username: ${{ env.SEGORANG_PROD_USER }}
         key: ${{ env.SEGORANG_PROD_KEY }}
         script_stop: true
+        envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG
         script: |
           ls -all
           cd segorang && \
