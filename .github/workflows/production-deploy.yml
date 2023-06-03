@@ -55,6 +55,7 @@ jobs:
         ECR_REPOSITORY: ${{ env.AWS_ECR_REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
       run: |
+        ls
         cd ./segorang-server
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
         docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
