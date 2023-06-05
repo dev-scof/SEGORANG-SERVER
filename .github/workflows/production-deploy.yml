@@ -81,6 +81,7 @@ jobs:
           cd segorang && \
           echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG scof/segorang:latest
         # docker-compose stop segorang-server && \
         # docker-compose rm -f segorang-server && \
         # docker-compose up -d --no-deps segorang-server
