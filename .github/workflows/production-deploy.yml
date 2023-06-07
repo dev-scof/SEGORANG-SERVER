@@ -20,8 +20,9 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  Build_Deploy:
-    name: Build and Deploy
+  Build:
+    name: Build
+    id: build
     runs-on: ubuntu-latest
 
     steps:
@@ -62,11 +63,15 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+  Deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Docker Pull and Server Restart
       uses: appleboy/ssh-action@master
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ jobs.build.steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ env.AWS_ECR_REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
       with:
