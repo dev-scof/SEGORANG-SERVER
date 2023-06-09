@@ -1,3 +1,4 @@
+
 name: SEGORANG Development Deployment
 
 on:
@@ -55,11 +56,12 @@ jobs:
         ECR_REPOSITORY: ${{ env.AWS_ECR_REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
       run: |
+        ls
         cd ./segorang-server
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
+    
     - name: Docker Pull and Server Restart
       uses: appleboy/ssh-action@master
       env:
@@ -76,8 +78,9 @@ jobs:
         envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG
         script: |
           cd segorang && \
-          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
-          docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG scof/segorang:latest && \
+          echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker-compose stop segorang-server && \
           docker-compose rm -f segorang-server && \
           docker-compose up -d --no-deps segorang-server
