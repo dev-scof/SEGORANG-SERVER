@@ -1,6 +1,6 @@
 from flask import current_app, g
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Route, Min
+from flask_validation_extended import Validator, Json, MinLen, MaxLen, File, Ext, MaxFileCount, Route, Min, Query
 from flask_jwt_extended import (
     get_jwt_identity, create_refresh_token, create_access_token, jwt_required
 )
@@ -215,7 +215,21 @@ def post_like_delete_api(
 def post_like_cnt_get_api(
     post_id: int = Route(int, rules=Min(0))
 ):
-    """ 게시물 좋아요 수 반환 API"""
+    """ 게시물 좋아요 수 반환 API """
     model = Post_Like(current_app.db)
     model_res = model.get_like_cnt(post_id)
     return response_200(model_res)
+
+@api.get('/post/serach')
+@timer
+@login_required
+@Validator(bad_request)
+def post_search_api(
+    q: str = Query(str, rules=[MinLen(1)])
+):
+    """ 게시물 검색 API """
+    model = Post(current_app.db)
+    '''
+    검색 로직
+    '''
+    return response_200(f"검색 결과 {q}")
