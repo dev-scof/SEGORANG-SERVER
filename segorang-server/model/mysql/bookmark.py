@@ -46,7 +46,7 @@ class Bookmark(Model):
     def get_bookmark(self, condition:dict):
         query = self.select_query.format(
             table_name=f"bookmark LEFT JOIN post ON bookmark.post_id=post.id",
-            property=f"post.id, post.title, post.view_cnt, post.category",
+            property=f"post.id, post.title, post.view_num, post.category",
             condition="WHERE "+" AND ".join(map(lambda x:x[0]+'='+set_quote(x[1]), condition.items()))
         )
         self.cursor.execute(query)

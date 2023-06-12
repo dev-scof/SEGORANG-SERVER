@@ -9,7 +9,7 @@ class Post_Image(Model):
     def property(self):
         return [
             'id', 'title','content',
-            'view_cnt','category',
+            'view_num','category',
             'created_at', 'updated_at',
             'user_id', 'board_id']
 

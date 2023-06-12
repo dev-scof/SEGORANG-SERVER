@@ -9,7 +9,7 @@ class Post(Model):
     def property(self):
         return [
             'post_id', 'post_title','content',
-            'view_cnt','category',
+            'view_num','category',
             'created_at', 'updated_at',
             'writer', 'board_id']
 
@@ -32,13 +32,13 @@ class Post(Model):
 
     def get_post_by_postid(self, post_id:int, user_id):
         keys = ['post_id', 'post_title', 'post_category', 'post_content',
-                'post_view_cnt','post_created_at','post_updated_at',
+                'post_view_num','post_created_at','post_updated_at',
                 'post_user_id', 'post_board_id', 
                 'board_title', 'user_nickname', 'user_name', 'user_major',
                 'user_sj_id', 'post_img_path', 'like_cnt', 'is_like', 'is_deleted']
         # 게시물 정보를 얻어오는 쿼리
         query = f'SELECT post.id, post.title, post.category, post.content,\
-                        post.view_cnt, post.created_at, post.updated_at,\
+                        post.view_num, post.created_at, post.updated_at,\
                         post.user_id, post.board_id, \
                         board.title, user.nickname, user.user_name, user.major,\
                         user.sj_id, post_image.img_path,\
