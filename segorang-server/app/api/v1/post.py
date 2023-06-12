@@ -87,7 +87,7 @@ def post_get_api(
 		"like_num": model_res.get('like_cnt'),
 		"post_title": model_res.get('post_title'),
 		"updated_at": model_res.get('post_updated_at'),
-		"view_num": model_res.get('post_view_cnt'),
+		"view_num": model_res.get('post_view_num'),
 		"writer": model_res.get('user_nickname')
 	}                       
     return response_200(res_form)
