@@ -113,7 +113,7 @@ class Board(Model):
         query = (
             # select
             f"SELECT post.id, post.title, post.category,"
-            f" post.view_cnt, post.created_at, post.updated_at,"
+            f" post.view_num, post.created_at, post.updated_at,"
             f" post_image.img_path,"
             f" user.nickname,"
             f" COUNT(post_like.post_id),"
@@ -127,7 +127,7 @@ class Board(Model):
             # where
             f" WHERE board.title = {set_quote(board_title)}"
             # group by
-            f" GROUP BY post.id, post.title, post.category, post.view_cnt, post.created_at, post.updated_at, post_image.img_path, user.nickname"
+            f" GROUP BY post.id, post.title, post.category, post.view_num, post.created_at, post.updated_at, post_image.img_path, user.nickname"
             # order by
             f" ORDER BY post.created_at"
             # limit
@@ -141,12 +141,12 @@ class Board(Model):
             return None
         else:
             keys = ['post_id', 'post_title', 'category',
-                    'view_cnt', 'created_at', 'updated_at',
+                    'view_num', 'created_at', 'updated_at',
                     'image', 'writer', 'like_num', 'comment_num']
             return list(map(lambda x:dict(zip(keys, x)),result))
         
 '''
-SELECT post.id, board.title, user.nickname, post.category, post_image.img_path, post.created_at, post.updated_at, post.view_cnt, COUNT(comment.id) 
+SELECT post.id, board.title, user.nickname, post.category, post_image.img_path, post.created_at, post.updated_at, post.view_num, COUNT(comment.id) 
 FROM post 
     JOIN board ON board.id = post.board_id 
     JOIN user ON user.id = post.user_id 
