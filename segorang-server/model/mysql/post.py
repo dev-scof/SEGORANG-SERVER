@@ -57,7 +57,6 @@ class Post(Model):
                   WHERE post.id={post_id};'
         self.cursor.execute(query)
         post_data = self.cursor.fetchone()
-        print(f"post_data = {post_data}")
 
         if post_data is None or post_data[-1]:
             # 게시물이 없거나 / 삭제되었을 경우 -> None 반환
