@@ -9,8 +9,7 @@ env:
   AWS_S3_ACCESS_KEY: ${{ secrets.AWS_S3_ACCESS_KEY }}
   AWS_S3_SECRET_KEY: ${{ secrets.AWS_S3_SECRET_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION}}
-  AWS_ECR_ACCESS_KEY: ${{ secrets.AWS_ECR_ACCESS_KEY }}
-  AWS_ECR_SECRET_KEY: ${{ secrets.AWS_ECR_SECRET_KEY }}
+  AWS_ECR_ROLE: ${{ secrets.AWS_ECR_ROLE }}
   AWS_ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY }}
   AWS_ID: ${{ secrets.AWS_ID }}
   SEGORANG_PROD_HOST: ${{ secrets.SEGORANG_PROD_HOST }}
@@ -40,10 +39,9 @@ jobs:
         destination: './segorang-server/.env'
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-access-key-id: ${{ env.AWS_ECR_ACCESS_KEY }}
-        aws-secret-access-key: ${{ env.AWS_ECR_SECRET_KEY }}
+        role-to-assume: ${{ env.AWS_ECR_ROLE }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
