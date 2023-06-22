@@ -1,4 +1,4 @@
-name: SEGORANG Development Deployment
+name: SEGORANG Production Deployment
 
 on:
   push:
