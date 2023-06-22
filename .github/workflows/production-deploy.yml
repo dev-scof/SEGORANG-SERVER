@@ -82,6 +82,7 @@ jobs:
         envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG, AWS_REGION, AWS_ID
         script: |
           cd segorang && \
+          docker login --username AWS --password-stdin ${AWS_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com && \
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && \
           docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG scof/segorang:latest && \
           docker-compose stop segorang-server && \
