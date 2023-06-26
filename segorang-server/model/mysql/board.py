@@ -129,7 +129,7 @@ class Board(Model):
             # group by
             f" GROUP BY post.id, post.title, post.category, post.view_num, post.created_at, post.updated_at, post_image.img_path, user.nickname"
             # order by
-            f" ORDER BY post.created_at"
+            f" ORDER BY post.created_at DESC"
             # limit
             f" LIMIT {limit}"
             # offset
